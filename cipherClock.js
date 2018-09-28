@@ -184,7 +184,7 @@ function newCipherClock(keyLength,numGears){
 			}
 		},
 
-		get encrypt(){
+		get encryptText(){
 			/*
 			 *  This function attempts to encrypt this.inString with a key generated from
 			 *  this.passString.  It returns the encrypted string or false if either
@@ -245,7 +245,7 @@ function newCipherClock(keyLength,numGears){
 
 
 
-		get decrypt(){
+		get decryptText(){
 			/*
 			 *  This function attempts to decrypt this.inString with a key generated from
 			 *  this.passString.  It returns the decrypted string or false if either
