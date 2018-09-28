@@ -18,17 +18,59 @@
 //OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //SOFTWARE.
 
-function newClockCipher(keyLength,numGears){
-	return {
-		keyLength:keyLength,
-		numGears:numGears,
+function newCipherClock(keyLength,numGears){
+	let cipher = {
+		keyLength:0,
+		numGears:0,
 		passString:"",
 		inString:"",
 		keyArray:[],
 
+		setNumGears:function(input){
+			/*
+			 *  This function validates the input and then sets the numGears of this cipher
+			 *  which is a required input to the encrypt, and decrypt functions
+			 *
+			 *  Returns true if input is valid, or false if it is not.
+			 */
+			if(input&&(typeof 10==typeof input)){
+				if(input>0){
+					this.numGears=input;
+					return true;
+				} else {
+					//console.log("setNumGears Failed!  input must be greater than zero!");
+					return false;
+				}
+			} else {
+				//console.log("setNumGears Failed!  No input detected!");
+				return false;
+			}
+		},
+
+		setKeyLength:function(input){
+			/*
+			 *  This function validates the input and then sets the keyLength of this cipher
+			 *  which is a required input to the key, encrypt, and decrypt functions
+			 *
+			 *  Returns true if input is valid, or false if it is not.
+			 */
+			if(input&&(typeof 10==typeof input)){
+				if(input>3){
+					this.keyLength=input;
+					return true;
+				} else {
+					//console.log("setKeyLength Failed!  input must be greater than three!");
+					return false;
+				}
+			} else {
+				//console.log("setKeyLength Failed!  No input detected!");
+				return false;
+			}
+		},
+
 		setInString:function(input){
 			/*
-			 *  This function validates the input and then sets the inString of this mask
+			 *  This function validates the input and then sets the inString of this cipher object
 			 *  which is a required input to the encrypt, and decrypt functions
 			 *
 			 *  Returns true if input is valid, or false if it is not.
@@ -63,8 +105,8 @@ function newClockCipher(keyLength,numGears){
 		get key() {
 			/*
 			 *  This function attempts to calculate an encryption key
-			 *  from this.passString and returns that key (an array of
-			 *  20 integers) or it returns false if this.passString is not valid.
+			 *  from this.passString and returns that key
+			 *  or it returns false if this.passString is not valid.
 			 */
 			if(this.passString){
 				if(typeof this.passString == typeof "string"){
@@ -80,36 +122,44 @@ function newClockCipher(keyLength,numGears){
 					var paramE;
 					var paramF;
 					var paramG;
-					if (keyLength>13){
-						paramE = this.newGear(11,keyLength,2);
-						paramF = this.newGear(7,keyLength,4);
-						paramG = this.newGear(5,keyLength,6);
-					} else if (keyLength>7){
-						paramE = this.newGear(5,keyLength,2);
-						paramF = this.newGear(3,keyLength,4);
-						paramG = this.newGear(2,keyLength,6);
-					} else if (keyLength>3){
-						paramE = this.newGear(1,keyLength,0);
-						paramF = this.newGear(2,keyLength,1);
-						paramG = this.newGear(1,keyLength,1);
-					} else if (keyLength==1){
+					if (this.keyLength>13){
+						paramE = this.newGear(11,this.keyLength-1,2);
+						paramF = this.newGear(7,this.keyLength-1,4);
+						paramG = this.newGear(5,this.keyLength-1,6);
+					} else if (this.keyLength>7){
+						paramE = this.newGear(5,this.keyLength-1,2);
+						paramF = this.newGear(3,this.keyLength-1,4);
+						paramG = this.newGear(2,this.keyLength-1,6);
+					} else if (this.keyLength>3){
+						paramE = this.newGear(1,this.keyLength-1,0);
+						paramF = this.newGear(2,this.keyLength-1,1);
+						paramG = this.newGear(1,this.keyLength-1,1);
+					} else {
 						return false;
 					}
 					for(var x = 0;x < passLength; x++){
-						for(var z = 0;z < keyLength; z++){
-							keyShift[z] += Math.floor((paramA.next+paramC.next+(paramB.next+paramD.next)*y)/this.passString.codePointAt(passLength-x-1));
-							keyShift[paramE.next] += keyShift[paramF.next]+this.passString.codePointAt(x)*1000;
-							keyShift[paramF.next] += keyShift[paramG.next]+this.passString.codePointAt(x)*1000;
-							keyShift[paramG.next] += keyShift[paramE.next]+this.passString.codePointAt(x)*1000;
+						for(var z = 0;z < this.keyLength; z++){
+							keyShift[z] += Math.floor((paramA.next+paramC.next+(paramB.next+paramD.next)*x)/(this.passString.codePointAt(passLength-x-1)));
 						}
-
-						for(var id = 0; id<keyLength; id++){
+						var a1 = paramE.next;var a2 = paramF.next;var a3 = paramG.next;
+						keyShift[a1] += keyShift[a2]+this.passString.codePointAt(x)*1000;
+						a1 = paramE.next;a2 = paramF.next;a3 = paramG.next;
+						keyShift[a2] += keyShift[a3]+this.passString.codePointAt(x)*1000;
+						a1 = paramE.next;a2 = paramF.next;a3 = paramG.next;
+						keyShift[a3] += keyShift[a1]+this.passString.codePointAt(x)*1000;
+						a1 = paramE.next;a2 = paramF.next;a3 = paramG.next;
+						keyShift[a1] += keyShift[a2]+this.passString.codePointAt(x)*1000;
+						a1 = paramE.next;a2 = paramF.next;a3 = paramG.next;
+						keyShift[a2] += keyShift[a3]+this.passString.codePointAt(x)*1000;
+						a1 = paramE.next;a2 = paramF.next;a3 = paramG.next;
+						keyShift[a3] += keyShift[a1]+this.passString.codePointAt(x)*1000;
+						for(var id = 0; id<this.keyLength; id++){
 							while(keyShift[id]>2560000){
 								keyShift[id] = keyShift[id] - 2560000;
 							}
 						}
 					}
-					for(var id = 0; id<keyLength; id++){
+					for(var id = 0; id<this.keyLength; id++){
 						while(keyShift[id]>255){
 							if(keyShift[id]>2550000){
 								keyShift[id] = keyShift[id] - 2560000;
@@ -147,152 +197,25 @@ function newClockCipher(keyLength,numGears){
 					var inputLength = this.inString.length;
 					var input = this.inString;
 					var outShift = 0;
-					var z = 0;
-					var y = 0;
-					var k = 0;
-					var j = 0;
-					var yShift = 0;
-					var kShift = 0;
-					var jShift = 0;
-					for(var x = 0;x < keyShift.length;x++){
-						if(keyShift[x]>(47+31)){
-							yShift += x;
-							kShift += 20-x;
-							jShift += 13
-						} else {
-							yShift += 7;
-							kShift += 11;
-							jShift += x;
+					var keyGears = [];
+					for (var x = 0; x < Math.floor(this.keyLength/2); x++){
+						keyGears.push(this.newGear(x+1, this.keyLength-1, Math.floor(x+0.5*x)));
+					}
+					var gears = [];
+					for (var x = 0; x < this.numGears; x++){
+						var shift = Math.ceil(this.numGears*2.5);
+						for(var y = 0; y < keyGears.length; y+=2){
+							shift += keyShift[keyGears[y].next];
 						}
+						gears.push(this.newGear(x+1, shift, Math.floor(x+0.5*x)));
 					}
 					for(var x = 0;x < inputLength;x++){
-						y += yShift;
-						k += kShift;
-						j += jShift;
-						if(y>1999){
-							y -= 1999;
-						}
-						if(j>1999){
-							j -= 1999;
-						}
-						if(k>1999){
-							k -= 1999;
-						}
-
 						outShift = 0;
-						outShift += y+j+k;
-
-						switch(z) {
-						case 0:
-							outShift += keyShift[5]+keyShift[6]+keyShift[7]+keyShift[11]+keyShift[8]+keyShift[9];
-							z++;
-							break;
-						case 1:
-							outShift += keyShift[4]+keyShift[2]+keyShift[7]+keyShift[3]+keyShift[13]+keyShift[0];
-							z++;
-							break;
-						case 2:
-							outShift += keyShift[10]+keyShift[11]+keyShift[1]+keyShift[12]+keyShift[13]+keyShift[14];
-							z++;
-							break;
-						case 3:
-							outShift += keyShift[15]+keyShift[16]+keyShift[4]+keyShift[17]+keyShift[18]+keyShift[19];
-							z++;
-							break;
-						case 4:
-							outShift += keyShift[6]+keyShift[7]+keyShift[8]+keyShift[12]+keyShift[9]+keyShift[10];
-							z++;
-							break;
-						case 5:
-							outShift += keyShift[5]+keyShift[3]+keyShift[8]+keyShift[4]+keyShift[14]+keyShift[1];
-							z++;
-							break;
-						case 6:
-							outShift += keyShift[11]+keyShift[12]+keyShift[2]+keyShift[13]+keyShift[14]+keyShift[15];
-							z++;
-							break;
-						case 7:
-							outShift += keyShift[16]+keyShift[17]+keyShift[5]+keyShift[18]+keyShift[19]+keyShift[0];
-							z++;
-							break;
-						case 8:
-							outShift += keyShift[5]+keyShift[10]+keyShift[19]+keyShift[4]+keyShift[7]+keyShift[3];
-							z++;
-							break;
-						case 9:
-							outShift += keyShift[7]+keyShift[8]+keyShift[9]+keyShift[13]+keyShift[10]+keyShift[11];
-							z++;
-							break;
-						case 10:
-							outShift += keyShift[6]+keyShift[4]+keyShift[9]+keyShift[5]+keyShift[15]+keyShift[2];
-							z++;
-							break;
-						case 11:
-							outShift += keyShift[12]+keyShift[13]+keyShift[3]+keyShift[14]+keyShift[15]+keyShift[16];
-							z++;
-							break;
-						case 12:
-							outShift += keyShift[17]+keyShift[18]+keyShift[6]+keyShift[19]+keyShift[0]+keyShift[1];
-							z++;
-							break;
-						case 13:
-							outShift += keyShift[5]+keyShift[6]+keyShift[7]+keyShift[12]+keyShift[8]+keyShift[9];
-							z++;
-							break;
-						case 14:
-							outShift += keyShift[4]+keyShift[2]+keyShift[7]+keyShift[3]+keyShift[14]+keyShift[0];
-							z++;
-							break;
-						case 15:
-							outShift += keyShift[5]+keyShift[11]+keyShift[1]+keyShift[12]+keyShift[13]+keyShift[14];
-							z++;
-							break;
-						case 16:
-							outShift += keyShift[15]+keyShift[16]+keyShift[4]+keyShift[17]+keyShift[18]+keyShift[7];
-							z++;
-							break;
-						case 17:
-							outShift += keyShift[6]+keyShift[0]+keyShift[8]+keyShift[12]+keyShift[9]+keyShift[10];
-							z++;
-							break;
-						case 18:
-							outShift += keyShift[5]+keyShift[3]+keyShift[8]+keyShift[4]+keyShift[14]+keyShift[2];
-							z++;
-							break;
-						case 19:
-							outShift += keyShift[11]+keyShift[12]+keyShift[2]+keyShift[13]+keyShift[14]+keyShift[16];
-							z++;
-							break;
-						case 20:
-							outShift += keyShift[16]+keyShift[17]+keyShift[5]+keyShift[18]+keyShift[9]+keyShift[0];
-							z++;
-							break;
-						case 21:
-							outShift += keyShift[5]+keyShift[10]+keyShift[18]+keyShift[4]+keyShift[7]+keyShift[3];
-							z++;
-							break;
-						case 22:
-							outShift += keyShift[7]+keyShift[8]+keyShift[9]+keyShift[3]+keyShift[10]+keyShift[11];
-							z++;
-							break;
-						case 23:
-							outShift += keyShift[6]+keyShift[4]+keyShift[9]+keyShift[5]+keyShift[16]+keyShift[2];
-							z++;
-							break;
-						case 24:
-							outShift += keyShift[12]+keyShift[13]+keyShift[3]+keyShift[8]+keyShift[15]+keyShift[16];
-							z++;
-							break;
-						case 25:
-							outShift += keyShift[10]+keyShift[18]+keyShift[6]+keyShift[19]+keyShift[0]+keyShift[1];
-							z++;
-							break;
-						case 26:
-							outShift += keyShift[5]+keyShift[10]+keyShift[11]+keyShift[4]+keyShift[7]+keyShift[3];
-							z = 0;
-							break;
-						default:
-							z = 0;
+						for(var y = 0; y < keyGears.length; y++){
+							outShift += keyShift[keyGears[y].next];
+						}
+						for(var y = 0; y < gears.length; y++){
+							outShift += gears[y].next;
 						}
 
 						if(input.codePointAt(x)==10){
@@ -314,6 +237,7 @@ function newClockCipher(keyLength,numGears){
 						}
 					}
 				}
+				console.log(output);
 				return output;
 			}
 			return false;
@@ -334,152 +258,25 @@ function newClockCipher(keyLength,numGears){
 					var inputLength = this.inString.length;
 					var input = this.inString;
 					var outShift = 0;
-					var z = 0;
-					var y = 0;
-					var k = 0;
-					var j = 0;
-					var yShift = 0;
-					var kShift = 0;
-					var jShift = 0;
-					for(var x = 0;x < keyShift.length;x++){
-						if(keyShift[x]>(47+31)){
-							yShift += x;
-							kShift += 20-x;
-							jShift += 13
-						} else {
-							yShift += 7;
-							kShift += 11;
-							jShift += x;
+					var keyGears = [];
+					for (var x = 0; x < Math.floor(this.keyLength/2); x++){
+						keyGears.push(this.newGear(x+1, this.keyLength-1, Math.floor(x+0.5*x)));
+					}
+					var gears = [];
+					for (var x = 0; x < this.numGears; x++){
+						var shift = Math.ceil(this.numGears*2.5);
+						for(var y = 0; y < keyGears.length; y+=2){
+							shift += keyShift[keyGears[y].next];
 						}
+						gears.push(this.newGear(x+1, shift, Math.floor(x+0.5*x)));
 					}
 					for(var x = 0;x < inputLength;x++){
-						y += yShift;
-						k += kShift;
-						j += jShift;
-						if(y>1999){
-							y -= 1999;
-						}
-						if(j>1999){
-							j -= 1999;
-						}
-						if(k>1999){
-							k -= 1999;
-						}
-
 						outShift = 0;
-						outShift += y+j+k;
-
-						switch(z) {
-						case 0:
-							outShift += keyShift[5]+keyShift[6]+keyShift[7]+keyShift[11]+keyShift[8]+keyShift[9];
-							z++;
-							break;
-						case 1:
-							outShift += keyShift[4]+keyShift[2]+keyShift[7]+keyShift[3]+keyShift[13]+keyShift[0];
-							z++;
-							break;
-						case 2:
-							outShift += keyShift[10]+keyShift[11]+keyShift[1]+keyShift[12]+keyShift[13]+keyShift[14];
-							z++;
-							break;
-						case 3:
-							outShift += keyShift[15]+keyShift[16]+keyShift[4]+keyShift[17]+keyShift[18]+keyShift[19];
-							z++;
-							break;
-						case 4:
-							outShift += keyShift[6]+keyShift[7]+keyShift[8]+keyShift[12]+keyShift[9]+keyShift[10];
-							z++;
-							break;
-						case 5:
-							outShift += keyShift[5]+keyShift[3]+keyShift[8]+keyShift[4]+keyShift[14]+keyShift[1];
-							z++;
-							break;
-						case 6:
-							outShift += keyShift[11]+keyShift[12]+keyShift[2]+keyShift[13]+keyShift[14]+keyShift[15];
-							z++;
-							break;
-						case 7:
-							outShift += keyShift[16]+keyShift[17]+keyShift[5]+keyShift[18]+keyShift[19]+keyShift[0];
-							z++;
-							break;
-						case 8:
-							outShift += keyShift[5]+keyShift[10]+keyShift[19]+keyShift[4]+keyShift[7]+keyShift[3];
-							z++;
-							break;
-						case 9:
-							outShift += keyShift[7]+keyShift[8]+keyShift[9]+keyShift[13]+keyShift[10]+keyShift[11];
-							z++;
-							break;
-						case 10:
-							outShift += keyShift[6]+keyShift[4]+keyShift[9]+keyShift[5]+keyShift[15]+keyShift[2];
-							z++;
-							break;
-						case 11:
-							outShift += keyShift[12]+keyShift[13]+keyShift[3]+keyShift[14]+keyShift[15]+keyShift[16];
-							z++;
-							break;
-						case 12:
-							outShift += keyShift[17]+keyShift[18]+keyShift[6]+keyShift[19]+keyShift[0]+keyShift[1];
-							z++;
-							break;
-						case 13:
-							outShift += keyShift[5]+keyShift[6]+keyShift[7]+keyShift[12]+keyShift[8]+keyShift[9];
-							z++;
-							break;
-						case 14:
-							outShift += keyShift[4]+keyShift[2]+keyShift[7]+keyShift[3]+keyShift[14]+keyShift[0];
-							z++;
-							break;
-						case 15:
-							outShift += keyShift[5]+keyShift[11]+keyShift[1]+keyShift[12]+keyShift[13]+keyShift[14];
-							z++;
-							break;
-						case 16:
-							outShift += keyShift[15]+keyShift[16]+keyShift[4]+keyShift[17]+keyShift[18]+keyShift[7];
-							z++;
-							break;
-						case 17:
-							outShift += keyShift[6]+keyShift[0]+keyShift[8]+keyShift[12]+keyShift[9]+keyShift[10];
-							z++;
-							break;
-						case 18:
-							outShift += keyShift[5]+keyShift[3]+keyShift[8]+keyShift[4]+keyShift[14]+keyShift[2];
-							z++;
-							break;
-						case 19:
-							outShift += keyShift[11]+keyShift[12]+keyShift[2]+keyShift[13]+keyShift[14]+keyShift[16];
-							z++;
-							break;
-						case 20:
-							outShift += keyShift[16]+keyShift[17]+keyShift[5]+keyShift[18]+keyShift[9]+keyShift[0];
-							z++;
-							break;
-						case 21:
-							outShift += keyShift[5]+keyShift[10]+keyShift[18]+keyShift[4]+keyShift[7]+keyShift[3];
-							z++;
-							break;
-						case 22:
-							outShift += keyShift[7]+keyShift[8]+keyShift[9]+keyShift[3]+keyShift[10]+keyShift[11];
-							z++;
-							break;
-						case 23:
-							outShift += keyShift[6]+keyShift[4]+keyShift[9]+keyShift[5]+keyShift[16]+keyShift[2];
-							z++;
-							break;
-						case 24:
-							outShift += keyShift[12]+keyShift[13]+keyShift[3]+keyShift[8]+keyShift[15]+keyShift[16];
-							z++;
-							break;
-						case 25:
-							outShift += keyShift[10]+keyShift[18]+keyShift[6]+keyShift[19]+keyShift[0]+keyShift[1];
-							z++;
-							break;
-						case 26:
-							outShift += keyShift[5]+keyShift[10]+keyShift[11]+keyShift[4]+keyShift[7]+keyShift[3];
-							z = 0;
-							break;
-						default:
-							z = 0;
+						for(var y = 0; y < keyGears.length; y++){
+							outShift += keyShift[keyGears[y].next];
+						}
+						for(var y = 0; y < gears.length; y++){
+							outShift += gears[y].next;
 						}
 
 						outShift = 0 - outShift;
@@ -509,26 +306,23 @@ function newClockCipher(keyLength,numGears){
 		},
 
 		newGear:function newGear(length,range,startValue){
-			return {
-				length:length,
-				range:range,
-				value:startValue,
-				get next() {
-					if(this.range){
-						if(this.length){
-							if(this.value){
-								if(this.range>0){
-									if(this.length>0){
-										if(this.value>0){
-											if(this.range>this.length){
-												if(this.value<this.range){
-													if(this.value+this.length<this.range){
-														this.value = this.value + this.length;
-														return (this.value);
-													} else {
-														this.value = this.value + this.length - this.range
-														return (this.value);
-													}
+			let gear = {
+				length:0,
+				range:0,
+				value:0,
+				setProperties:function(length,range,startValue){
+					if(range){
+						if(length){
+
+								if(range>0){
+									if(length>0){
+										if(startValue>=0){
+											if(range>length){
+												if(startValue<range){
+													this.range = range;
+													this.value = startValue;
+													this.length = length;
+													return true;
 												} else {
 													return false;
 												}
@@ -544,9 +338,44 @@ function newClockCipher(keyLength,numGears){
 								} else {
 									return false;
 								}
-							} else {
-								return false;
-							}
+
+						} else {
+							return false;
+						}
+					} else {
+						return false;
+					}
+				},
+				get next() {
+					if(this.range){
+						if(this.length){
+
+								if(this.range>0){
+									if(this.length>0){
+										if(this.value>=0){
+											if(this.range>this.length){
+
+													if((this.value+this.length)>this.range){
+														this.value = this.value + this.length - this.range;
+														return (this.value);
+													} else {
+														this.value = this.value + this.length;
+														return (this.value);
+													}
+
+											} else {
+												return false;
+											}
+										} else {
+											return false;
+										}
+									} else {
+										return false;
+									}
+								} else {
+									return false;
+								}
+
 						} else {
 							return false;
 						}
@@ -555,9 +384,19 @@ function newClockCipher(keyLength,numGears){
 					}
 				}
 			};
+			console.log(gear.setProperties(length,range,startValue));
+			return gear;
 		}
 
 	};
-
+	if(!cipher.setNumGears(numGears)){
+		return false;
+		//console.log("ClockCipher Initialization Failed!  numGears must be an integer greater than zero!");
+	}
+	if(!cipher.setKeyLength(keyLength)){
+		return false;
+		//console.log("ClockCipher Initialization Failed!  keyLength must be an integer greater than three!");
+	}
+	return cipher;
 }
 
