@@ -18,7 +18,7 @@
 //OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //SOFTWARE.
 
-function newCipher(keyLength,numGears){
+function newClockCipher(keyLength,numGears){
 	return {
 		keyLength:keyLength,
 		numGears:numGears,
@@ -27,39 +27,39 @@ function newCipher(keyLength,numGears){
 		keyArray:[],
 
 		setInString:function(input){
-        	/*
-        	 *  This function validates the input and then sets the inString of this mask
-        	 *  which is a required input to the encrypt, and decrypt functions
-        	 *
-        	 *  Returns true if input is valid, or false if it is not.
-        	 */
-        	if(input&&(typeof "string"==typeof input)){
-        		this.inString=input;
-        		return true;
-        	} else {
-        		//console.log("setInString Failed!  No input detected!");
-        		return false;
-        	}
-        },
+			/*
+			 *  This function validates the input and then sets the inString of this mask
+			 *  which is a required input to the encrypt, and decrypt functions
+			 *
+			 *  Returns true if input is valid, or false if it is not.
+			 */
+			if(input&&(typeof "string"==typeof input)){
+				this.inString=input;
+				return true;
+			} else {
+				//console.log("setInString Failed!  No input detected!");
+				return false;
+			}
+		},
 
 		setPass:function(pass){
-        	/*
-        	 *  This function validates the input and then sets the passString of this cipher object
-        	 *  which is a required input to the encrypt and decrypt functions
-        	 *
-        	 *  Returns true if input is valid, or false if it is not.
-        	 */
-        	if(pass){
-        		if(typeof pass == typeof "test"){
-        			this.passString=pass;
-        			return true;
-        		} else {
-        			return false;
-        		}
-        	} else {
-        		return false;
-        	}
-        },
+			/*
+			 *  This function validates the input and then sets the passString of this cipher object
+			 *  which is a required input to the encrypt and decrypt functions
+			 *
+			 *  Returns true if input is valid, or false if it is not.
+			 */
+			if(pass){
+				if(typeof pass == typeof "test"){
+					this.passString=pass;
+					return true;
+				} else {
+					return false;
+				}
+			} else {
+				return false;
+			}
+		},
 		get key() {
 			/*
 			 *  This function attempts to calculate an encryption key
@@ -69,513 +69,58 @@ function newCipher(keyLength,numGears){
 			if(this.passString){
 				if(typeof this.passString == typeof "string"){
 					var passLength = this.passString.length;
-					var keyShift = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
-					var y = 0;
+					var keyShift = [];
+					for(var x = 0;x < this.keyLength; x++){
+						keyShift.push(0);
+					}
+					var paramA = this.newGear(13201,30000,19773);
+					var paramB = this.newGear(219,500,87);
+					var paramC = this.newGear(687,25000,109);
+					var paramD = this.newGear(29,450,13);
+					var paramE;
+					var paramF;
+					var paramG;
+					if (keyLength>13){
+						paramE = this.newGear(11,keyLength,2);
+						paramF = this.newGear(7,keyLength,4);
+						paramG = this.newGear(5,keyLength,6);
+					} else if (keyLength>7){
+						paramE = this.newGear(5,keyLength,2);
+						paramF = this.newGear(3,keyLength,4);
+						paramG = this.newGear(2,keyLength,6);
+					} else if (keyLength>3){
+						paramE = this.newGear(1,keyLength,0);
+						paramF = this.newGear(2,keyLength,1);
+						paramG = this.newGear(1,keyLength,1);
+					} else if (keyLength==1){
+						return false;
+					}
 					for(var x = 0;x < passLength; x++){
-						keyShift[y] += this.passString.codePointAt(x)+1;
-						keyShift[19-y] += this.passString.codePointAt(x)+y;
-						keyShift[0] += Math.floor((20000+500*y)/this.passString.codePointAt(passLength-x-1));
-						keyShift[1] += Math.floor((19000+200*y)/this.passString.codePointAt(passLength-x-1));
-						keyShift[2] += Math.floor((21000+300*y)/this.passString.codePointAt(passLength-x-1));
-						keyShift[3] += Math.floor((25000+700*y)/this.passString.codePointAt(passLength-x-1));
-						keyShift[4] += Math.floor((8000+1100*y)/this.passString.codePointAt(passLength-x-1));
-						keyShift[5] += Math.floor((32000+290*y)/this.passString.codePointAt(passLength-x-1));
-						keyShift[6] += Math.floor((9000+250*y)/this.passString.codePointAt(passLength-x-1));
-						keyShift[7] += Math.floor((3000+2000*y)/this.passString.codePointAt(passLength-x-1));
-						keyShift[8] += Math.floor((1000+3000*y)/this.passString.codePointAt(passLength-x-1));
-						keyShift[9] += Math.floor((900+6700*y)/this.passString.codePointAt(passLength-x-1));
-						keyShift[10] += Math.floor((522+3100*y)/this.passString.codePointAt(passLength-x-1));
-						keyShift[11] += Math.floor((10000+750*y)/this.passString.codePointAt(passLength-x-1));
-						keyShift[12] += Math.floor((15000+350*y)/this.passString.codePointAt(passLength-x-1));
-						keyShift[13] += Math.floor((12500+975*y)/this.passString.codePointAt(passLength-x-1));
-						keyShift[14] += Math.floor((42000+220*y)/this.passString.codePointAt(passLength-x-1));
-						keyShift[15] += Math.floor((500+9300*y)/this.passString.codePointAt(passLength-x-1));
-						keyShift[16] += Math.floor((18700+672*y)/this.passString.codePointAt(passLength-x-1));
-						keyShift[17] += Math.floor((73000+42*y)/this.passString.codePointAt(passLength-x-1));
-						keyShift[18] += Math.floor((35600+870*y)/this.passString.codePointAt(passLength-x-1));
-						keyShift[19] += Math.floor((5500+1240*y)/this.passString.codePointAt(passLength-x-1));
-						switch(y) {
-						case 0:
-							keyShift[0] += keyShift[2]+this.passString.codePointAt(x)*1000;
-							keyShift[1] += this.passString.codePointAt(x)*1000;
-							keyShift[2] += keyShift[1]+this.passString.codePointAt(x)*1000;
-							keyShift[3] += keyShift[3]+this.passString.codePointAt(x)*1000;
-							keyShift[4] += this.passString.codePointAt(x)*1000;
-							keyShift[5] += keyShift[4]+this.passString.codePointAt(x)*1000;
-							keyShift[6] += keyShift[4]+this.passString.codePointAt(x)*1000;
-							keyShift[7] += this.passString.codePointAt(x)*1000;
-							keyShift[8] += keyShift[7]+this.passString.codePointAt(x)*1000;
-							keyShift[9] += keyShift[5]+this.passString.codePointAt(x)*1000;
-							keyShift[10] += this.passString.codePointAt(x)*1000;
-							keyShift[11] += keyShift[10]+this.passString.codePointAt(x)*1000;
-							keyShift[12] += keyShift[6]+this.passString.codePointAt(x)*1000;
-							keyShift[13] += this.passString.codePointAt(x)*1000;
-							keyShift[14] += keyShift[13]+this.passString.codePointAt(x)*1000;
-							keyShift[15] += keyShift[7]+this.passString.codePointAt(x)*1000;
-							keyShift[16] += this.passString.codePointAt(x)*1000;
-							keyShift[17] += keyShift[16]+this.passString.codePointAt(x)*1000;
-							keyShift[18] += keyShift[8]+this.passString.codePointAt(x)*1000;
-							keyShift[19] += this.passString.codePointAt(x)*1000;
-							y++;
-							break;
-						case 1:
-							keyShift[1] += keyShift[7]+this.passString.codePointAt(x)*1000;
-							keyShift[2] += this.passString.codePointAt(x)*1000;
-							keyShift[3] += keyShift[6]+this.passString.codePointAt(x)*1000;
-							keyShift[4] += keyShift[8]+this.passString.codePointAt(x)*1000;
-							keyShift[5] += this.passString.codePointAt(x)*1000;
-							keyShift[6] += keyShift[9]+this.passString.codePointAt(x)*1000;
-							keyShift[7] += keyShift[9]+this.passString.codePointAt(x)*1000;
-							keyShift[8] += this.passString.codePointAt(x)*1000;
-							keyShift[9] += keyShift[12]+this.passString.codePointAt(x)*1000;
-							keyShift[10] += keyShift[10]+this.passString.codePointAt(x)*1000;
-							keyShift[11] += this.passString.codePointAt(x)*1000;
-							keyShift[12] += keyShift[15]+this.passString.codePointAt(x)*1000;
-							keyShift[13] += keyShift[11]+this.passString.codePointAt(x)*1000;
-							keyShift[14] += this.passString.codePointAt(x)*1000;
-							keyShift[15] += keyShift[18]+this.passString.codePointAt(x)*1000;
-							keyShift[16] += keyShift[12]+this.passString.codePointAt(x)*1000;
-							keyShift[17] += this.passString.codePointAt(x)*1000;
-							keyShift[18] += keyShift[1]+this.passString.codePointAt(x)*1000;
-							keyShift[19] += keyShift[13]+this.passString.codePointAt(x)*1000;
-							keyShift[0] += this.passString.codePointAt(x)*1000;
-							y++;
-							break;
-						case 2:
-							keyShift[2] += keyShift[10]+this.passString.codePointAt(x)*1000;
-							keyShift[3] += this.passString.codePointAt(x)*1000;
-							keyShift[4] += keyShift[9]+this.passString.codePointAt(x)*1000;
-							keyShift[5] += keyShift[11]+this.passString.codePointAt(x)*1000;
-							keyShift[6] += this.passString.codePointAt(x)*1000;
-							keyShift[7] += keyShift[12]+this.passString.codePointAt(x)*1000;
-							keyShift[8] += keyShift[12]+this.passString.codePointAt(x)*1000;
-							keyShift[9] += this.passString.codePointAt(x)*1000;
-							keyShift[10] += keyShift[15]+this.passString.codePointAt(x)*1000;
-							keyShift[11] += keyShift[13]+this.passString.codePointAt(x)*1000;
-							keyShift[12] += this.passString.codePointAt(x)*1000;
-							keyShift[13] += keyShift[18]+this.passString.codePointAt(x)*1000;
-							keyShift[14] += keyShift[14]+this.passString.codePointAt(x)*1000;
-							keyShift[15] += this.passString.codePointAt(x)*1000;
-							keyShift[16] += keyShift[1]+this.passString.codePointAt(x)*1000;
-							keyShift[17] += keyShift[15]+this.passString.codePointAt(x)*1000;
-							keyShift[18] += this.passString.codePointAt(x)*1000;
-							keyShift[19] += keyShift[4]+this.passString.codePointAt(x)*1000;
-							keyShift[0] += keyShift[16]+this.passString.codePointAt(x)*1000;
-							keyShift[1] += this.passString.codePointAt(x)*1000;
-							y++;
-							break;
-						case 3:
-							keyShift[3] += keyShift[17]+this.passString.codePointAt(x)*1000;
-							keyShift[4] += this.passString.codePointAt(x)*1000;
-							keyShift[5] += keyShift[16]+this.passString.codePointAt(x)*1000;
-							keyShift[6] += keyShift[18]+this.passString.codePointAt(x)*1000;
-							keyShift[7] += this.passString.codePointAt(x)*1000;
-							keyShift[8] += keyShift[19]+this.passString.codePointAt(x)*1000;
-							keyShift[9] += keyShift[19]+this.passString.codePointAt(x)*1000;
-							keyShift[10] += this.passString.codePointAt(x)*1000;
-							keyShift[11] += keyShift[3]+this.passString.codePointAt(x)*1000;
-							keyShift[12] += keyShift[0]+this.passString.codePointAt(x)*1000;
-							keyShift[13] += this.passString.codePointAt(x)*1000;
-							keyShift[14] += keyShift[5]+this.passString.codePointAt(x)*1000;
-							keyShift[15] += keyShift[1]+this.passString.codePointAt(x)*1000;
-							keyShift[16] += this.passString.codePointAt(x)*1000;
-							keyShift[17] += keyShift[8]+this.passString.codePointAt(x)*1000;
-							keyShift[18] += keyShift[2]+this.passString.codePointAt(x)*1000;
-							keyShift[19] += this.passString.codePointAt(x)*1000;
-							keyShift[0] += keyShift[11]+this.passString.codePointAt(x)*1000;
-							keyShift[1] += keyShift[3]+this.passString.codePointAt(x)*1000;
-							keyShift[2] += this.passString.codePointAt(x)*1000;
-							y++;
-							break;
-						case 4:
-							keyShift[4] += keyShift[19]+this.passString.codePointAt(x)*1000;
-							keyShift[5] += this.passString.codePointAt(x)*1000;
-							keyShift[6] += keyShift[18]+this.passString.codePointAt(x)*1000;
-							keyShift[7] += keyShift[0]+this.passString.codePointAt(x)*1000;
-							keyShift[8] += this.passString.codePointAt(x)*1000;
-							keyShift[9] += keyShift[1]+this.passString.codePointAt(x)*1000;
-							keyShift[10] += keyShift[1]+this.passString.codePointAt(x)*1000;
-							keyShift[11] += this.passString.codePointAt(x)*1000;
-							keyShift[12] += keyShift[5]+this.passString.codePointAt(x)*1000;
-							keyShift[13] += keyShift[2]+this.passString.codePointAt(x)*1000;
-							keyShift[14] += this.passString.codePointAt(x)*1000;
-							keyShift[15] += keyShift[7]+this.passString.codePointAt(x)*1000;
-							keyShift[16] += keyShift[3]+this.passString.codePointAt(x)*1000;
-							keyShift[17] += this.passString.codePointAt(x)*1000;
-							keyShift[18] += keyShift[10]+this.passString.codePointAt(x)*1000;
-							keyShift[19] += keyShift[4]+this.passString.codePointAt(x)*1000;
-							keyShift[0] += this.passString.codePointAt(x)*1000;
-							keyShift[1] += keyShift[13]+this.passString.codePointAt(x)*1000;
-							keyShift[2] += keyShift[5]+this.passString.codePointAt(x)*1000;
-							keyShift[3] += this.passString.codePointAt(x)*1000;
-							y++;
-							break;
-						case 5:
-							keyShift[5] += keyShift[0]+this.passString.codePointAt(x)*1000;
-							keyShift[6] += this.passString.codePointAt(x)*1000;
-							keyShift[7] += keyShift[19]+this.passString.codePointAt(x)*1000;
-							keyShift[8] += keyShift[1]+this.passString.codePointAt(x)*1000;
-							keyShift[9] += this.passString.codePointAt(x)*1000;
-							keyShift[10] += keyShift[2]+this.passString.codePointAt(x)*1000;
-							keyShift[11] += keyShift[2]+this.passString.codePointAt(x)*1000;
-							keyShift[12] += this.passString.codePointAt(x)*1000;
-							keyShift[13] += keyShift[6]+this.passString.codePointAt(x)*1000;
-							keyShift[14] += keyShift[3]+this.passString.codePointAt(x)*1000;
-							keyShift[15] += this.passString.codePointAt(x)*1000;
-							keyShift[16] += keyShift[8]+this.passString.codePointAt(x)*1000;
-							keyShift[17] += keyShift[4]+this.passString.codePointAt(x)*1000;
-							keyShift[18] += this.passString.codePointAt(x)*1000;
-							keyShift[19] += keyShift[11]+this.passString.codePointAt(x)*1000;
-							keyShift[0] += keyShift[5]+this.passString.codePointAt(x)*1000;
-							keyShift[1] += this.passString.codePointAt(x)*1000;
-							keyShift[2] += keyShift[14]+this.passString.codePointAt(x)*1000;
-							keyShift[3] += keyShift[6]+this.passString.codePointAt(x)*1000;
-							keyShift[4] += this.passString.codePointAt(x)*1000;
-							y++;
-							break;
-						case 6:
-							keyShift[6] += keyShift[6]+this.passString.codePointAt(x)*1000;
-							keyShift[7] += this.passString.codePointAt(x)*1000;
-							keyShift[8] += keyShift[5]+this.passString.codePointAt(x)*1000;
-							keyShift[9] += keyShift[7]+this.passString.codePointAt(x)*1000;
-							keyShift[10] += this.passString.codePointAt(x)*1000;
-							keyShift[11] += keyShift[8]+this.passString.codePointAt(x)*1000;
-							keyShift[12] += keyShift[8]+this.passString.codePointAt(x)*1000;
-							keyShift[13] += this.passString.codePointAt(x)*1000;
-							keyShift[14] += keyShift[12]+this.passString.codePointAt(x)*1000;
-							keyShift[15] += keyShift[9]+this.passString.codePointAt(x)*1000;
-							keyShift[16] += this.passString.codePointAt(x)*1000;
-							keyShift[17] += keyShift[14]+this.passString.codePointAt(x)*1000;
-							keyShift[18] += keyShift[10]+this.passString.codePointAt(x)*1000;
-							keyShift[19] += this.passString.codePointAt(x)*1000;
-							keyShift[0] += keyShift[17]+this.passString.codePointAt(x)*1000;
-							keyShift[1] += keyShift[11]+this.passString.codePointAt(x)*1000;
-							keyShift[2] += this.passString.codePointAt(x)*1000;
-							keyShift[3] += keyShift[0]+this.passString.codePointAt(x)*1000;
-							keyShift[4] += keyShift[12]+this.passString.codePointAt(x)*1000;
-							keyShift[5] += this.passString.codePointAt(x)*1000;
-							y++;
-							break;
-						case 7:
-							keyShift[7] += keyShift[7]+this.passString.codePointAt(x)*1000;
-							keyShift[8] += this.passString.codePointAt(x)*1000;
-							keyShift[9] += keyShift[6]+this.passString.codePointAt(x)*1000;
-							keyShift[10] += keyShift[8]+this.passString.codePointAt(x)*1000;
-							keyShift[11] += this.passString.codePointAt(x)*1000;
-							keyShift[12] += keyShift[11]+this.passString.codePointAt(x)*1000;
-							keyShift[13] += keyShift[9]+this.passString.codePointAt(x)*1000;
-							keyShift[14] += this.passString.codePointAt(x)*1000;
-							keyShift[15] += keyShift[13]+this.passString.codePointAt(x)*1000;
-							keyShift[16] += keyShift[10]+this.passString.codePointAt(x)*1000;
-							keyShift[17] += this.passString.codePointAt(x)*1000;
-							keyShift[18] += keyShift[15]+this.passString.codePointAt(x)*1000;
-							keyShift[19] += keyShift[11]+this.passString.codePointAt(x)*1000;
-							keyShift[0] += this.passString.codePointAt(x)*1000;
-							keyShift[1] += keyShift[18]+this.passString.codePointAt(x)*1000;
-							keyShift[2] += keyShift[12]+this.passString.codePointAt(x)*1000;
-							keyShift[3] += this.passString.codePointAt(x)*1000;
-							keyShift[4] += keyShift[1]+this.passString.codePointAt(x)*1000;
-							keyShift[5] += keyShift[13]+this.passString.codePointAt(x)*1000;
-							keyShift[6] += this.passString.codePointAt(x)*1000;
-							y++;
-							break;
-						case 8:
-							keyShift[8] += keyShift[9]+this.passString.codePointAt(x)*1000;
-							keyShift[9] += this.passString.codePointAt(x)*1000;
-							keyShift[10] += keyShift[8]+this.passString.codePointAt(x)*1000;
-							keyShift[11] += keyShift[10]+this.passString.codePointAt(x)*1000;
-							keyShift[12] += this.passString.codePointAt(x)*1000;
-							keyShift[13] += keyShift[13]+this.passString.codePointAt(x)*1000;
-							keyShift[14] += keyShift[11]+this.passString.codePointAt(x)*1000;
-							keyShift[15] += this.passString.codePointAt(x)*1000;
-							keyShift[16] += keyShift[15]+this.passString.codePointAt(x)*1000;
-							keyShift[17] += keyShift[12]+this.passString.codePointAt(x)*1000;
-							keyShift[18] += this.passString.codePointAt(x)*1000;
-							keyShift[19] += keyShift[17]+this.passString.codePointAt(x)*1000;
-							keyShift[0] += keyShift[13]+this.passString.codePointAt(x)*1000;
-							keyShift[1] += this.passString.codePointAt(x)*1000;
-							keyShift[2] += keyShift[0]+this.passString.codePointAt(x)*1000;
-							keyShift[3] += keyShift[14]+this.passString.codePointAt(x)*1000;
-							keyShift[4] += this.passString.codePointAt(x)*1000;
-							keyShift[5] += keyShift[3]+this.passString.codePointAt(x)*1000;
-							keyShift[6] += keyShift[15]+this.passString.codePointAt(x)*1000;
-							keyShift[7] += this.passString.codePointAt(x)*1000;
-							y++;
-							break;
-						case 9:
-							keyShift[9] += keyShift[10]+this.passString.codePointAt(x)*1000;
-							keyShift[10] += this.passString.codePointAt(x)*1000;
-							keyShift[11] += keyShift[9]+this.passString.codePointAt(x)*1000;
-							keyShift[12] += keyShift[11]+this.passString.codePointAt(x)*1000;
-							keyShift[13] += this.passString.codePointAt(x)*1000;
-							keyShift[14] += keyShift[15]+this.passString.codePointAt(x)*1000;
-							keyShift[15] += keyShift[12]+this.passString.codePointAt(x)*1000;
-							keyShift[16] += this.passString.codePointAt(x)*1000;
-							keyShift[17] += keyShift[16]+this.passString.codePointAt(x)*1000;
-							keyShift[18] += keyShift[13]+this.passString.codePointAt(x)*1000;
-							keyShift[19] += this.passString.codePointAt(x)*1000;
-							keyShift[0] += keyShift[18]+this.passString.codePointAt(x)*1000;
-							keyShift[1] += keyShift[14]+this.passString.codePointAt(x)*1000;
-							keyShift[2] += this.passString.codePointAt(x)*1000;
-							keyShift[3] += keyShift[3]+this.passString.codePointAt(x)*1000;
-							keyShift[4] += keyShift[15]+this.passString.codePointAt(x)*1000;
-							keyShift[5] += this.passString.codePointAt(x)*1000;
-							keyShift[6] += keyShift[4]+this.passString.codePointAt(x)*1000;
-							keyShift[7] += keyShift[16]+this.passString.codePointAt(x)*1000;
-							keyShift[8] += this.passString.codePointAt(x)*1000;
-							y++;
-							break;
-						case 10:
-							keyShift[9] += keyShift[11]+this.passString.codePointAt(x)*1000;
-							keyShift[10] += this.passString.codePointAt(x)*1000;
-							keyShift[11] += keyShift[10]+this.passString.codePointAt(x)*1000;
-							keyShift[12] += keyShift[14]+this.passString.codePointAt(x)*1000;
-							keyShift[13] += this.passString.codePointAt(x)*1000;
-							keyShift[14] += keyShift[16]+this.passString.codePointAt(x)*1000;
-							keyShift[15] += keyShift[13]+this.passString.codePointAt(x)*1000;
-							keyShift[16] += this.passString.codePointAt(x)*1000;
-							keyShift[17] += keyShift[17]+this.passString.codePointAt(x)*1000;
-							keyShift[18] += keyShift[14]+this.passString.codePointAt(x)*1000;
-							keyShift[19] += this.passString.codePointAt(x)*1000;
-							keyShift[0] += keyShift[2]+this.passString.codePointAt(x)*1000;
-							keyShift[1] += keyShift[15]+this.passString.codePointAt(x)*1000;
-							keyShift[2] += this.passString.codePointAt(x)*1000;
-							keyShift[3] += keyShift[4]+this.passString.codePointAt(x)*1000;
-							keyShift[4] += keyShift[16]+this.passString.codePointAt(x)*1000;
-							keyShift[5] += this.passString.codePointAt(x)*1000;
-							keyShift[6] += keyShift[5]+this.passString.codePointAt(x)*1000;
-							keyShift[7] += keyShift[17]+this.passString.codePointAt(x)*1000;
-							keyShift[8] += this.passString.codePointAt(x)*1000;
-							y++;
-							break;
-						case 11:
-							keyShift[10] += keyShift[12]+this.passString.codePointAt(x)*1000;
-							keyShift[11] += this.passString.codePointAt(x)*1000;
-							keyShift[12] += keyShift[11]+this.passString.codePointAt(x)*1000;
-							keyShift[13] += keyShift[15]+this.passString.codePointAt(x)*1000;
-							keyShift[14] += this.passString.codePointAt(x)*1000;
-							keyShift[15] += keyShift[17]+this.passString.codePointAt(x)*1000;
-							keyShift[16] += keyShift[9]+this.passString.codePointAt(x)*1000;
-							keyShift[17] += this.passString.codePointAt(x)*1000;
-							keyShift[18] += keyShift[18]+this.passString.codePointAt(x)*1000;
-							keyShift[19] += keyShift[6]+this.passString.codePointAt(x)*1000;
-							keyShift[0] += this.passString.codePointAt(x)*1000;
-							keyShift[1] += keyShift[3]+this.passString.codePointAt(x)*1000;
-							keyShift[2] += keyShift[16]+this.passString.codePointAt(x)*1000;
-							keyShift[3] += this.passString.codePointAt(x)*1000;
-							keyShift[4] += keyShift[5]+this.passString.codePointAt(x)*1000;
-							keyShift[5] += keyShift[17]+this.passString.codePointAt(x)*1000;
-							keyShift[6] += this.passString.codePointAt(x)*1000;
-							keyShift[7] += keyShift[6]+this.passString.codePointAt(x)*1000;
-							keyShift[8] += keyShift[18]+this.passString.codePointAt(x)*1000;
-							keyShift[9] += this.passString.codePointAt(x)*1000;
-							y++;
-							break;
-						case 12:
-							keyShift[11] += keyShift[13]+this.passString.codePointAt(x)*1000;
-							keyShift[12] += this.passString.codePointAt(x)*1000;
-							keyShift[13] += keyShift[3]+this.passString.codePointAt(x)*1000;
-							keyShift[14] += keyShift[16]+this.passString.codePointAt(x)*1000;
-							keyShift[15] += this.passString.codePointAt(x)*1000;
-							keyShift[16] += keyShift[18]+this.passString.codePointAt(x)*1000;
-							keyShift[17] += keyShift[10]+this.passString.codePointAt(x)*1000;
-							keyShift[18] += this.passString.codePointAt(x)*1000;
-							keyShift[19] += keyShift[19]+this.passString.codePointAt(x)*1000;
-							keyShift[0] += keyShift[7]+this.passString.codePointAt(x)*1000;
-							keyShift[1] += this.passString.codePointAt(x)*1000;
-							keyShift[2] += keyShift[4]+this.passString.codePointAt(x)*1000;
-							keyShift[3] += keyShift[17]+this.passString.codePointAt(x)*1000;
-							keyShift[4] += this.passString.codePointAt(x)*1000;
-							keyShift[5] += keyShift[6]+this.passString.codePointAt(x)*1000;
-							keyShift[6] += keyShift[19]+this.passString.codePointAt(x)*1000;
-							keyShift[7] += this.passString.codePointAt(x)*1000;
-							keyShift[8] += keyShift[7]+this.passString.codePointAt(x)*1000;
-							keyShift[9] += keyShift[19]+this.passString.codePointAt(x)*1000;
-							keyShift[10] += this.passString.codePointAt(x)*1000;
-							y++;
-							break;
-						case 13:
-							keyShift[12] += keyShift[14]+this.passString.codePointAt(x)*1000;
-							keyShift[13] += this.passString.codePointAt(x)*1000;
-							keyShift[14] += keyShift[4]+this.passString.codePointAt(x)*1000;
-							keyShift[15] += keyShift[17]+this.passString.codePointAt(x)*1000;
-							keyShift[16] += this.passString.codePointAt(x)*1000;
-							keyShift[17] += keyShift[1]+this.passString.codePointAt(x)*1000;
-							keyShift[18] += keyShift[11]+this.passString.codePointAt(x)*1000;
-							keyShift[19] += this.passString.codePointAt(x)*1000;
-							keyShift[0] += keyShift[0]+this.passString.codePointAt(x)*1000;
-							keyShift[1] += keyShift[8]+this.passString.codePointAt(x)*1000;
-							keyShift[2] += this.passString.codePointAt(x)*1000;
-							keyShift[3] += keyShift[5]+this.passString.codePointAt(x)*1000;
-							keyShift[4] += keyShift[18]+this.passString.codePointAt(x)*1000;
-							keyShift[5] += this.passString.codePointAt(x)*1000;
-							keyShift[6] += keyShift[7]+this.passString.codePointAt(x)*1000;
-							keyShift[7] += keyShift[0]+this.passString.codePointAt(x)*1000;
-							keyShift[8] += this.passString.codePointAt(x)*1000;
-							keyShift[9] += keyShift[13]+this.passString.codePointAt(x)*1000;
-							keyShift[10] += keyShift[0]+this.passString.codePointAt(x)*1000;
-							keyShift[11] += this.passString.codePointAt(x)*1000;
-							y++;
-							break;
-						case 14:
-							keyShift[13] += keyShift[17]+this.passString.codePointAt(x)*1000;
-							keyShift[14] += this.passString.codePointAt(x)*1000;
-							keyShift[15] += keyShift[7]+this.passString.codePointAt(x)*1000;
-							keyShift[16] += keyShift[0]+this.passString.codePointAt(x)*1000;
-							keyShift[17] += this.passString.codePointAt(x)*1000;
-							keyShift[18] += keyShift[4]+this.passString.codePointAt(x)*1000;
-							keyShift[19] += keyShift[14]+this.passString.codePointAt(x)*1000;
-							keyShift[0] += this.passString.codePointAt(x)*1000;
-							keyShift[1] += keyShift[3]+this.passString.codePointAt(x)*1000;
-							keyShift[2] += keyShift[11]+this.passString.codePointAt(x)*1000;
-							keyShift[3] += this.passString.codePointAt(x)*1000;
-							keyShift[4] += keyShift[8]+this.passString.codePointAt(x)*1000;
-							keyShift[5] += keyShift[1]+this.passString.codePointAt(x)*1000;
-							keyShift[6] += this.passString.codePointAt(x)*1000;
-							keyShift[7] += keyShift[10]+this.passString.codePointAt(x)*1000;
-							keyShift[8] += keyShift[3]+this.passString.codePointAt(x)*1000;
-							keyShift[9] += this.passString.codePointAt(x)*1000;
-							keyShift[10] += keyShift[16]+this.passString.codePointAt(x)*1000;
-							keyShift[11] += keyShift[3]+this.passString.codePointAt(x)*1000;
-							keyShift[12] += this.passString.codePointAt(x)*1000;
-							y++;
-							break;
-						case 15:
-							keyShift[14] += keyShift[18]+this.passString.codePointAt(x)*1000;
-							keyShift[15] += this.passString.codePointAt(x)*1000;
-							keyShift[16] += keyShift[9]+this.passString.codePointAt(x)*1000;
-							keyShift[17] += keyShift[1]+this.passString.codePointAt(x)*1000;
-							keyShift[18] += this.passString.codePointAt(x)*1000;
-							keyShift[19] += keyShift[6]+this.passString.codePointAt(x)*1000;
-							keyShift[0] += keyShift[15]+this.passString.codePointAt(x)*1000;
-							keyShift[1] += this.passString.codePointAt(x)*1000;
-							keyShift[2] += keyShift[5]+this.passString.codePointAt(x)*1000;
-							keyShift[3] += keyShift[12]+this.passString.codePointAt(x)*1000;
-							keyShift[4] += this.passString.codePointAt(x)*1000;
-							keyShift[5] += keyShift[10]+this.passString.codePointAt(x)*1000;
-							keyShift[6] += keyShift[3]+this.passString.codePointAt(x)*1000;
-							keyShift[7] += this.passString.codePointAt(x)*1000;
-							keyShift[8] += keyShift[11]+this.passString.codePointAt(x)*1000;
-							keyShift[9] += keyShift[5]+this.passString.codePointAt(x)*1000;
-							keyShift[10] += this.passString.codePointAt(x)*1000;
-							keyShift[11] += keyShift[18]+this.passString.codePointAt(x)*1000;
-							keyShift[12] += keyShift[4]+this.passString.codePointAt(x)*1000;
-							keyShift[13] += this.passString.codePointAt(x)*1000;
-							y++;
-							break;
-						case 16:
-							keyShift[15] += keyShift[1]+this.passString.codePointAt(x)*1000;
-							keyShift[16] += this.passString.codePointAt(x)*1000;
-							keyShift[17] += keyShift[12]+this.passString.codePointAt(x)*1000;
-							keyShift[18] += keyShift[4]+this.passString.codePointAt(x)*1000;
-							keyShift[19] += this.passString.codePointAt(x)*1000;
-							keyShift[0] += keyShift[9]+this.passString.codePointAt(x)*1000;
-							keyShift[1] += keyShift[18]+this.passString.codePointAt(x)*1000;
-							keyShift[2] += this.passString.codePointAt(x)*1000;
-							keyShift[3] += keyShift[8]+this.passString.codePointAt(x)*1000;
-							keyShift[4] += keyShift[15]+this.passString.codePointAt(x)*1000;
-							keyShift[5] += this.passString.codePointAt(x)*1000;
-							keyShift[6] += keyShift[13]+this.passString.codePointAt(x)*1000;
-							keyShift[7] += keyShift[6]+this.passString.codePointAt(x)*1000;
-							keyShift[8] += this.passString.codePointAt(x)*1000;
-							keyShift[9] += keyShift[14]+this.passString.codePointAt(x)*1000;
-							keyShift[10] += keyShift[8]+this.passString.codePointAt(x)*1000;
-							keyShift[11] += this.passString.codePointAt(x)*1000;
-							keyShift[12] += keyShift[1]+this.passString.codePointAt(x)*1000;
-							keyShift[13] += keyShift[7]+this.passString.codePointAt(x)*1000;
-							keyShift[14] += this.passString.codePointAt(x)*1000;
-							y++;
-							break;
-						case 17:
-							keyShift[16] += keyShift[2]+this.passString.codePointAt(x)*1000;
-							keyShift[17] += this.passString.codePointAt(x)*1000;
-							keyShift[18] += keyShift[13]+this.passString.codePointAt(x)*1000;
-							keyShift[19] += keyShift[5]+this.passString.codePointAt(x)*1000;
-							keyShift[0] += this.passString.codePointAt(x)*1000;
-							keyShift[1] += keyShift[11]+this.passString.codePointAt(x)*1000;
-							keyShift[2] += keyShift[19]+this.passString.codePointAt(x)*1000;
-							keyShift[3] += this.passString.codePointAt(x)*1000;
-							keyShift[4] += keyShift[9]+this.passString.codePointAt(x)*1000;
-							keyShift[5] += keyShift[16]+this.passString.codePointAt(x)*1000;
-							keyShift[6] += this.passString.codePointAt(x)*1000;
-							keyShift[7] += keyShift[15]+this.passString.codePointAt(x)*1000;
-							keyShift[8] += keyShift[7]+this.passString.codePointAt(x)*1000;
-							keyShift[9] += this.passString.codePointAt(x)*1000;
-							keyShift[10] += keyShift[15]+this.passString.codePointAt(x)*1000;
-							keyShift[11] += keyShift[9]+this.passString.codePointAt(x)*1000;
-							keyShift[12] += this.passString.codePointAt(x)*1000;
-							keyShift[13] += keyShift[3]+this.passString.codePointAt(x)*1000;
-							keyShift[14] += keyShift[8]+this.passString.codePointAt(x)*1000;
-							keyShift[15] += this.passString.codePointAt(x)*1000;
-							y++;
-							break;
-						case 18:
-							keyShift[17] += keyShift[5]+this.passString.codePointAt(x)*1000;
-							keyShift[18] += this.passString.codePointAt(x)*1000;
-							keyShift[19] += keyShift[16]+this.passString.codePointAt(x)*1000;
-							keyShift[0] += keyShift[8]+this.passString.codePointAt(x)*1000;
-							keyShift[1] += this.passString.codePointAt(x)*1000;
-							keyShift[2] += keyShift[14]+this.passString.codePointAt(x)*1000;
-							keyShift[3] += keyShift[2]+this.passString.codePointAt(x)*1000;
-							keyShift[4] += this.passString.codePointAt(x)*1000;
-							keyShift[5] += keyShift[12]+this.passString.codePointAt(x)*1000;
-							keyShift[6] += keyShift[19]+this.passString.codePointAt(x)*1000;
-							keyShift[7] += this.passString.codePointAt(x)*1000;
-							keyShift[8] += keyShift[18]+this.passString.codePointAt(x)*1000;
-							keyShift[9] += keyShift[10]+this.passString.codePointAt(x)*1000;
-							keyShift[10] += this.passString.codePointAt(x)*1000;
-							keyShift[11] += keyShift[18]+this.passString.codePointAt(x)*1000;
-							keyShift[12] += keyShift[12]+this.passString.codePointAt(x)*1000;
-							keyShift[13] += this.passString.codePointAt(x)*1000;
-							keyShift[14] += keyShift[6]+this.passString.codePointAt(x)*1000;
-							keyShift[15] += keyShift[11]+this.passString.codePointAt(x)*1000;
-							keyShift[16] += this.passString.codePointAt(x)*1000;
-							y++;
-							break;
-						case 19:
-							keyShift[18] += keyShift[6]+this.passString.codePointAt(x)*1000;
-							keyShift[19] += this.passString.codePointAt(x)*1000;
-							keyShift[0] += keyShift[18]+this.passString.codePointAt(x)*1000;
-							keyShift[1] += keyShift[9]+this.passString.codePointAt(x)*1000;
-							keyShift[2] += this.passString.codePointAt(x)*1000;
-							keyShift[3] += keyShift[16]+this.passString.codePointAt(x)*1000;
-							keyShift[4] += keyShift[3]+this.passString.codePointAt(x)*1000;
-							keyShift[5] += this.passString.codePointAt(x)*1000;
-							keyShift[6] += keyShift[14]+this.passString.codePointAt(x)*1000;
-							keyShift[7] += keyShift[0]+this.passString.codePointAt(x)*1000;
-							keyShift[8] += this.passString.codePointAt(x)*1000;
-							keyShift[9] += keyShift[0]+this.passString.codePointAt(x)*1000;
-							keyShift[10] += keyShift[11]+this.passString.codePointAt(x)*1000;
-							keyShift[11] += this.passString.codePointAt(x)*1000;
-							keyShift[12] += keyShift[0]+this.passString.codePointAt(x)*1000;
-							keyShift[13] += keyShift[13]+this.passString.codePointAt(x)*1000;
-							keyShift[14] += this.passString.codePointAt(x)*1000;
-							keyShift[15] += keyShift[5]+this.passString.codePointAt(x)*1000;
-							keyShift[16] += keyShift[13]+this.passString.codePointAt(x)*1000;
-							keyShift[17] += this.passString.codePointAt(x)*1000;
-							y=0;
-							break;
-						default:
-							y=0;
+						for(var z = 0;z < keyLength; z++){
+							keyShift[z] += Math.floor((paramA.next+paramC.next+(paramB.next+paramD.next)*y)/this.passString.codePointAt(passLength-x-1));
+							keyShift[paramE.next] += keyShift[paramF.next]+this.passString.codePointAt(x)*1000;
+							keyShift[paramF.next] += keyShift[paramG.next]+this.passString.codePointAt(x)*1000;
+							keyShift[paramG.next] += keyShift[paramE.next]+this.passString.codePointAt(x)*1000;
 						}
-						for(var id = 0; id<20; id++){
-							while(keyShift[id]>1250000){
-								keyShift[id] = keyShift[id] - 1260000 + 310000;
+
+						for(var id = 0; id<keyLength; id++){
+							while(keyShift[id]>2560000){
+								keyShift[id] = keyShift[id] - 2560000;
 							}
 						}
 					}
-					for(var id = 0; id<20; id++){
-						while(keyShift[id]>125){
-							if(keyShift[id]>1250000){
-								keyShift[id] = keyShift[id] - 1260000 + 310000;
-							} else if(keyShift[id]>125000){
-								keyShift[id] = keyShift[id] - 126000 + 31000;
-							} else if(keyShift[id]>12500){
-								keyShift[id] = keyShift[id] - 12600 + 3100;
-							} else if(keyShift[id]>1250){
-								keyShift[id] = keyShift[id] - 1260 + 310;
+					for(var id = 0; id<keyLength; id++){
+						while(keyShift[id]>255){
+							if(keyShift[id]>2550000){
+								keyShift[id] = keyShift[id] - 2560000;
+							} else if(keyShift[id]>255000){
+								keyShift[id] = keyShift[id] - 256000;
+							} else if(keyShift[id]>25500){
+								keyShift[id] = keyShift[id] - 25600;
+							} else if(keyShift[id]>2550){
+								keyShift[id] = keyShift[id] - 2560;
 							} else {
-								keyShift[id] = keyShift[id] - 126 + 31;
+								keyShift[id] = keyShift[id] - 256;
 							}
 						}
 					}
@@ -961,9 +506,58 @@ function newCipher(keyLength,numGears){
 				}
 			}
 			return false;
+		},
+
+		newGear:function newGear(length,range,startValue){
+			return {
+				length:length,
+				range:range,
+				value:startValue,
+				get next() {
+					if(this.range){
+						if(this.length){
+							if(this.value){
+								if(this.range>0){
+									if(this.length>0){
+										if(this.value>0){
+											if(this.range>this.length){
+												if(this.value<this.range){
+													if(this.value+this.length<this.range){
+														this.value = this.value + this.length;
+														return (this.value);
+													} else {
+														this.value = this.value + this.length - this.range
+														return (this.value);
+													}
+												} else {
+													return false;
+												}
+											} else {
+												return false;
+											}
+										} else {
+											return false;
+										}
+									} else {
+										return false;
+									}
+								} else {
+									return false;
+								}
+							} else {
+								return false;
+							}
+						} else {
+							return false;
+						}
+					} else {
+						return false;
+					}
+				}
+			};
 		}
 
-	}
+	};
 
 }
 
