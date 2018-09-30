@@ -26,6 +26,33 @@ function newCipherClock(keyLength,numGears){
 		inString:"",
 		keyArray:[],
 
+		get testClock() {
+			var input = "000102030405060708090a0b0c0d0e0f1012131415161718191a1b1c1d1e1f";
+			var output = "";
+			var pass = "abcdefghijklmnopqrstuvwxzy0123456789!@#$%^&*()";
+			this.setInString(input);
+			this.setPass(pass);
+			this.setInString(this.encryptText);
+			output = this.decryptText;
+			if(input === output){
+				console.log("Text encryption Successful!");
+			} else {
+				console.log("Text encryption Failed!");
+				console.log("input: " + input);
+				console.log("output: " + output);
+			}
+			this.setInString(input);
+			this.setInString(this.encryptHex);
+			output = this.decryptHex;
+			if(input === output){
+				console.log("Hex encryption Successful!");
+			} else {
+				console.log("Hex encryption Failed!");
+				console.log("input: " + input);
+				console.log("output: " + output);
+			}
+		},
+
 		setNumGears:function(input){
 			/*
 			 *  This function validates the input and then sets the numGears of this cipher
@@ -368,7 +395,7 @@ function newCipherClock(keyLength,numGears){
 						}
 					}
 				}
-				console.log(output);
+				//console.log(output);
 				return output;
 			}
 			return false;
