@@ -94,6 +94,7 @@ function newCipherClock(keyLength,numGears){
 			if(pass){
 				if(typeof pass == typeof "test"){
 					this.passString=pass;
+					this.keyArray = this.key;
 					return true;
 				} else {
 					return false;
@@ -102,6 +103,133 @@ function newCipherClock(keyLength,numGears){
 				return false;
 			}
 		},
+
+		testHex:function(index,test){
+        	/*
+        	 * This function returns true if the character of test
+        	 * at the index is a base 16 number.  It returns false if the character is not a number.
+        	 *
+        	 */
+        	var answer = false;
+        	var answer = false;
+        	if(index<test.length){
+        		if(index>=0){
+        			if(test.substring(index,index+1)=="0"){
+        				answer = true;
+        			} else if(test.substring(index,index+1)=="1"){
+        				answer = true;
+        			} else if(test.substring(index,index+1)=="2"){
+        				answer = true;
+        			} else if(test.substring(index,index+1)=="3"){
+        				answer = true;
+        			} else if(test.substring(index,index+1)=="4"){
+        				answer = true;
+        			} else if(test.substring(index,index+1)=="5"){
+        				answer = true;
+        			} else if(test.substring(index,index+1)=="6"){
+        				answer = true;
+        			} else if(test.substring(index,index+1)=="7"){
+        				answer = true;
+        			} else if(test.substring(index,index+1)=="8"){
+        				answer = true;
+        			} else if(test.substring(index,index+1)=="9"){
+        				answer = true;
+        			} else if(test.substring(index,index+1)=="a"){
+        				answer = true;
+        			} else if(test.substring(index,index+1)=="b"){
+        				answer = true;
+        			} else if(test.substring(index,index+1)=="c"){
+        				answer = true;
+        			} else if(test.substring(index,index+1)=="d"){
+        				answer = true;
+        			} else if(test.substring(index,index+1)=="e"){
+        				answer = true;
+        			} else if(test.substring(index,index+1)=="f"){
+        				answer = true;
+        			}
+        		}
+        	}
+        	return answer;
+        },
+
+        getIntFromHexString:function(hex){
+        	/*
+        	 * This function validates the input then returns the integer value of a string containing
+        	 * a hex value.  Returns -1 if input is invalid.
+        	 */
+        	var answer = false;
+        	if(!hex){
+        		return -1;
+        	}
+        	if(typeof hex != typeof "test"){
+        		return -1;
+        	}
+        	var length = hex.length;
+        	var number = 0;
+        	var product = 1;
+        	for (var x = 0; x < length; x++) {
+        		if(this.testHex(x,hex)){
+        			if(hex.substring(length-x-1,length-x)=="a"){
+        				number += 10*product;
+        			} else if(hex.substring(length-x-1,length-x)=="b"){
+        				number += 11*product;
+        			} else if(hex.substring(length-x-1,length-x)=="c"){
+        				number += 12*product;
+        			} else if(hex.substring(length-x-1,length-x)=="d"){
+        				number += 13*product;
+        			} else if(hex.substring(length-x-1,length-x)=="e"){
+        				number += 14*product;
+        			} else if(hex.substring(length-x-1,length-x)=="f"){
+        				number += 15*product;
+        			} else if(this.testNumeric(length-x-1,hex)){
+        				number += hex.substring(length-x-1,length-x)*product;
+        			} else {
+        				return -1;
+        			}
+        		} else {
+        			return -1;
+        		}
+        		product = product*16;
+        	}
+        	//console.log(number);
+        	return number;
+        },
+
+        testNumeric:function(index,test){
+        	/*
+        	 * This function returns true if the character of test
+        	 * at the index is a number.  It returns false if the character is not a number.
+        	 *
+        	 */
+        	var answer = false;
+        	if(index<test.length){
+        		if(index>=0){
+        			if(test.substring(index,index+1)=="0"){
+        				answer = true;
+        			} else if(test.substring(index,index+1)=="1"){
+        				answer = true;
+        			} else if(test.substring(index,index+1)=="2"){
+        				answer = true;
+        			} else if(test.substring(index,index+1)=="3"){
+        				answer = true;
+        			} else if(test.substring(index,index+1)=="4"){
+        				answer = true;
+        			} else if(test.substring(index,index+1)=="5"){
+        				answer = true;
+        			} else if(test.substring(index,index+1)=="6"){
+        				answer = true;
+        			} else if(test.substring(index,index+1)=="7"){
+        				answer = true;
+        			} else if(test.substring(index,index+1)=="8"){
+        				answer = true;
+        			} else if(test.substring(index,index+1)=="9"){
+        				answer = true;
+        			}
+        		}
+        	}
+        	return answer;
+        },
+
 		get key() {
 			/*
 			 *  This function attempts to calculate an encryption key
@@ -155,20 +283,20 @@ function newCipherClock(keyLength,numGears){
 						keyShift[a3] += keyShift[a1]+this.passString.codePointAt(x)*1000;
 						for(var id = 0; id<this.keyLength; id++){
 							while(keyShift[id]>2560000){
-								keyShift[id] = keyShift[id] - 2560000;
+								keyShift[id] = keyShift[id] - 2559999;
 							}
 						}
 					}
 					for(var id = 0; id<this.keyLength; id++){
 						while(keyShift[id]>255){
 							if(keyShift[id]>2550000){
-								keyShift[id] = keyShift[id] - 2560000;
+								keyShift[id] = keyShift[id] - 2559999;
 							} else if(keyShift[id]>255000){
-								keyShift[id] = keyShift[id] - 256000;
+								keyShift[id] = keyShift[id] - 255999;
 							} else if(keyShift[id]>25500){
-								keyShift[id] = keyShift[id] - 25600;
+								keyShift[id] = keyShift[id] - 25599;
 							} else if(keyShift[id]>2550){
-								keyShift[id] = keyShift[id] - 2560;
+								keyShift[id] = keyShift[id] - 2599;
 							} else {
 								keyShift[id] = keyShift[id] - 256;
 							}
@@ -184,7 +312,7 @@ function newCipherClock(keyLength,numGears){
 			}
 		},
 
-		get encryptText(){
+		get encryptHex(){
 			/*
 			 *  This function attempts to encrypt this.inString with a key generated from
 			 *  this.passString.  It returns the encrypted string or false if either
@@ -193,7 +321,7 @@ function newCipherClock(keyLength,numGears){
 			var output = "";
 			if(this.inString&&this.passString){
 				if(typeof this.inString == typeof "test" && typeof this.passString == typeof "test"){
-					var keyShift = this.key;
+					var keyShift = this.keyArray;
 					var inputLength = this.inString.length;
 					var input = this.inString;
 					var outShift = 0;
@@ -204,7 +332,134 @@ function newCipherClock(keyLength,numGears){
 					var gears = [];
 					for (var x = 0; x < this.numGears; x++){
 						var shift = Math.ceil(this.numGears*2.5);
-						for(var y = 0; y < keyGears.length; y+=2){
+						for(var y = 0; y < keyGears.length; y+=4){
+							shift += keyShift[keyGears[y].next];
+						}
+						gears.push(this.newGear(x+1, shift, Math.floor(x+0.5*x)));
+					}
+					var x = 0;
+					while(x < (inputLength-1)) {
+						if(this.testHex(x,input)&&this.testHex(x+1,input)){
+							outShift = 0;
+
+							for(var y = 0; y < keyGears.length; y++){
+								//console.log(keyShift[keyGears[y].next]);
+								outShift += keyShift[keyGears[y].next];
+							}
+							for(var y = 0; y < gears.length; y++){
+								//console.log(gears[y].next);
+								outShift += gears[y].next;
+							}
+							//console.log(outShift);
+							outShift += this.getIntFromHexString(input.substring(x,x+2));
+							//console.log(outShift);
+							while(outShift>255){
+								outShift = outShift - 256;
+							}
+							//console.log(outShift);
+							if(outShift.toString(16).length==1){
+								output += "0" + outShift.toString(16);
+							} else {
+								output += outShift.toString(16);
+							}
+							x+=2;
+						} else {
+							x++;
+						}
+					}
+				}
+				console.log(output);
+				return output;
+			}
+			return false;
+		},
+
+		get decryptHex(){
+			/*
+			 *  This function attempts to decrypt this.inString with a key generated from
+			 *  this.passString.  It returns the decrypted string or false if either
+			 *  this.inString or this.passString is valid.
+			 */
+			var output = "";
+			if(this.inString&&this.passString){
+				if(typeof this.inString == typeof "test" && typeof this.passString == typeof "test"){
+					var keyShift = this.keyArray;
+					var inputLength = this.inString.length;
+					var input = this.inString;
+					var outShift = 0;
+					var keyGears = [];
+					for (var x = 0; x < Math.floor(this.keyLength/2); x++){
+						keyGears.push(this.newGear(x+1, this.keyLength-1, Math.floor(x+0.5*x)));
+					}
+					var gears = [];
+					for (var x = 0; x < this.numGears; x++){
+						var shift = Math.ceil(this.numGears*2.5);
+						for(var y = 0; y < keyGears.length; y+=4){
+							shift += keyShift[keyGears[y].next];
+						}
+						gears.push(this.newGear(x+1, shift, Math.floor(x+0.5*x)));
+					}
+					var x = 0;
+					while(x < (inputLength-1)){
+						if(this.testHex(x,input)&&this.testHex(x+1,input)){
+							outShift = 0;
+							for(var y = 0; y < keyGears.length; y++){
+								outShift += keyShift[keyGears[y].next];
+							}
+							for(var y = 0; y < gears.length; y++){
+								outShift += gears[y].next;
+							}
+
+							outShift = 0 - outShift;
+
+							outShift += this.getIntFromHexString(input.substring(x,x+2));
+
+							while(outShift<0){
+								outShift = outShift + 256;
+							}
+							//console.log(outShift);
+
+							if(outShift.toString(16).length==1){
+								output += "0" + outShift.toString(16);
+							} else {
+								output += outShift.toString(16);
+							}
+
+							x+=2;
+						} else {
+							//console.log(input.substring(x,x+2));
+							output += "?";
+							x++;
+
+						}
+					}
+					return output;
+				}
+			}
+			return false;
+		},
+
+		get encryptText(){
+			/*
+			 *  This function attempts to encrypt this.inString with a key generated from
+			 *  this.passString.  It returns the encrypted string or false if either
+			 *  this.inString or this.passString is valid.
+			 */
+			var output = "";
+			if(this.inString&&this.passString){
+				if(typeof this.inString == typeof "test" && typeof this.passString == typeof "test"){
+					var keyShift = this.keyArray;
+					var inputLength = this.inString.length;
+					var input = this.inString;
+					var outShift = 0;
+					var keyGears = [];
+					for (var x = 0; x < Math.floor(this.keyLength/2); x++){
+						keyGears.push(this.newGear(x+1, this.keyLength-1, Math.floor(x+0.5*x)));
+					}
+					var gears = [];
+					for (var x = 0; x < this.numGears; x++){
+						var shift = Math.ceil(this.numGears*2.5);
+						for(var y = 0; y < keyGears.length; y+=4){
 							shift += keyShift[keyGears[y].next];
 						}
 						gears.push(this.newGear(x+1, shift, Math.floor(x+0.5*x)));
@@ -224,10 +479,8 @@ function newCipherClock(keyLength,numGears){
 							outShift += input.codePointAt(x);
 						}
 
-						if(outShift>125){
-							while(outShift>125){
-								outShift = outShift - 126 + 31;
-							}
+						while(outShift>125){
+							outShift = outShift - 126 + 31;
 						}
 
 						if(outShift==31){
@@ -254,7 +507,7 @@ function newCipherClock(keyLength,numGears){
 			var output = "";
 			if(this.inString&&this.passString){
 				if(typeof this.inString == typeof "test" && typeof this.passString == typeof "test"){
-					var keyShift = this.key;
+					var keyShift = this.keyArray;
 					var inputLength = this.inString.length;
 					var input = this.inString;
 					var outShift = 0;
@@ -265,7 +518,7 @@ function newCipherClock(keyLength,numGears){
 					var gears = [];
 					for (var x = 0; x < this.numGears; x++){
 						var shift = Math.ceil(this.numGears*2.5);
-						for(var y = 0; y < keyGears.length; y+=2){
+						for(var y = 0; y < keyGears.length; y+=4){
 							shift += keyShift[keyGears[y].next];
 						}
 						gears.push(this.newGear(x+1, shift, Math.floor(x+0.5*x)));
@@ -287,10 +540,8 @@ function newCipherClock(keyLength,numGears){
 							outShift += input.codePointAt(x);
 						}
 
-						if(outShift<31){
-							while(outShift<31){
-								outShift = outShift + 126 - 31;
-							}
+						while(outShift<31){
+							outShift = outShift + 126 - 31;
 						}
 
 						if(outShift==31){
@@ -384,7 +635,7 @@ function newCipherClock(keyLength,numGears){
 					}
 				}
 			};
-			console.log(gear.setProperties(length,range,startValue));
+			gear.setProperties(length,range,startValue);
 			return gear;
 		}
 
