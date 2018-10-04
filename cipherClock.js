@@ -296,18 +296,12 @@ function newCipherClock(keyLength,numGears){
 						for(var z = 0;z < this.keyLength; z++){
 							keyShift[z] += Math.floor((paramA.next+paramC.next+(paramB.next+paramD.next)*x)/(this.passString.codePointAt(passLength-x-1)));
 						}
-						var a1 = paramE.next;var a2 = paramF.next;var a3 = paramG.next;
-						keyShift[a1] += keyShift[a2]+this.passString.codePointAt(x)*1000;
-						a1 = paramE.next;a2 = paramF.next;a3 = paramG.next;
-						keyShift[a2] += keyShift[a3]+this.passString.codePointAt(x)*1000;
-						a1 = paramE.next;a2 = paramF.next;a3 = paramG.next;
-						keyShift[a3] += keyShift[a1]+this.passString.codePointAt(x)*1000;
-						a1 = paramE.next;a2 = paramF.next;a3 = paramG.next;
-						keyShift[a1] += keyShift[a2]+this.passString.codePointAt(x)*1000;
-						a1 = paramE.next;a2 = paramF.next;a3 = paramG.next;
-						keyShift[a2] += keyShift[a3]+this.passString.codePointAt(x)*1000;
-						a1 = paramE.next;a2 = paramF.next;a3 = paramG.next;
-						keyShift[a3] += keyShift[a1]+this.passString.codePointAt(x)*1000;
+						keyShift[paramE.next] += keyShift[paramF.next]+this.passString.codePointAt(x);
+						keyShift[paramF.next] += keyShift[paramG.next]+this.passString.codePointAt(x);
+						keyShift[paramG.next] += keyShift[paramE.next]+this.passString.codePointAt(x);
+						keyShift[paramE.next] += keyShift[paramF.next]+this.passString.codePointAt(x);
+						keyShift[paramF.next] += keyShift[paramG.next]+this.passString.codePointAt(x);
+						keyShift[paramG.next] += keyShift[paramE.next]+this.passString.codePointAt(x);
 						for(var id = 0; id<this.keyLength; id++){
 							while(keyShift[id]>2560000){
 								keyShift[id] = keyShift[id] - 2559999;
@@ -315,19 +309,7 @@ function newCipherClock(keyLength,numGears){
 						}
 					}
 					for(var id = 0; id<this.keyLength; id++){
-						while(keyShift[id]>255){
-							if(keyShift[id]>2550000){
-								keyShift[id] = keyShift[id] - 2559999;
-							} else if(keyShift[id]>255000){
-								keyShift[id] = keyShift[id] - 255999;
-							} else if(keyShift[id]>25500){
-								keyShift[id] = keyShift[id] - 25599;
-							} else if(keyShift[id]>2550){
-								keyShift[id] = keyShift[id] - 2599;
-							} else {
-								keyShift[id] = keyShift[id] - 256;
-							}
-						}
+						keyShift[id] = (keyShift[id] << 24) >>> 24;
 					}
 					this.keyArray = keyShift;
 					return keyShift;
@@ -380,9 +362,9 @@ function newCipherClock(keyLength,numGears){
 							//console.log(outShift);
 							outShift += this.getIntFromHexString(input.substring(x,x+2));
 							//console.log(outShift);
-							while(outShift>255){
-								outShift = outShift - 256;
-							}
+
+							outShift = (outShift << 24) >>> 24;
+
 							//console.log(outShift);
 							if(outShift.toString(16).length==1){
 								output += "0" + outShift.toString(16);
@@ -441,9 +423,8 @@ function newCipherClock(keyLength,numGears){
 
 							outShift += this.getIntFromHexString(input.substring(x,x+2));
 
-							while(outShift<0){
-								outShift = outShift + 256;
-							}
+							outShift = (outShift << 24) >>> 24;
+
 							//console.log(outShift);
 
 							if(outShift.toString(16).length==1){
