@@ -384,7 +384,7 @@ function newCipherClock(keyLength,numGears){
 						}
 					}
 					for(var id = 0; id<this.keyLength; id++){
-						keyShift[id] = (keyShift[id] << 24) >>> 24;
+						keyShift[id] = (keyShift[id]&255);
 					}
 					this.keyArray = keyShift;
 					return keyShift;
@@ -438,7 +438,7 @@ function newCipherClock(keyLength,numGears){
 							outShift += this.getIntFromHexString(input.substring(x,x+2));
 							//console.log(outShift);
 
-							outShift = (outShift << 24) >>> 24;
+							outShift = (outShift&255);
 
 							//console.log(outShift);
 							if(outShift.toString(16).length==1){
@@ -498,7 +498,7 @@ function newCipherClock(keyLength,numGears){
 
 							outShift += this.getIntFromHexString(input.substring(x,x+2));
 
-							outShift = (outShift << 24) >>> 24;
+							outShift = (outShift&255);
 
 							//console.log(outShift);
 
