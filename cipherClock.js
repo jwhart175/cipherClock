@@ -25,6 +25,81 @@ function newCipherClock(keyLength,numGears){
 		passString:"",
 		inString:"",
 		keyArray:[],
+		tickGears:false,
+
+		get tick() {
+			if(this.keyLength){
+				if(this.keyArray){
+					if(this.tickGears){
+						this.keyArray[this.tickGears[0].next] += 5 + this.keyArray[this.tickGears[1].next];
+						this.keyArray[this.tickGears[0].next] += 3 + this.keyArray[this.tickGears[2].next];
+						this.keyArray[this.tickGears[0].next] += 2 + this.keyArray[this.tickGears[3].next];
+						this.keyArray[this.tickGears[0].next] += 1 + this.keyArray[this.tickGears[4].next];
+						this.keyArray[this.tickGears[1].next] += this.tickGears[2].next;
+						this.keyArray[this.tickGears[2].next] += 1 + this.keyArray[this.tickGears[3].next];
+						this.keyArray[this.tickGears[3].next] += this.tickGears[4].next;
+						this.keyArray[this.tickGears[4].next] += 3 + this.keyArray[this.tickGears[1].next];
+						this.keyArray[this.tickGears[0].next] += 5 + this.keyArray[this.tickGears[1].next];
+						this.keyArray[this.tickGears[1].next] += this.tickGears[2].next;
+						this.keyArray[this.tickGears[2].next] += 1 + this.keyArray[this.tickGears[3].next];
+						this.keyArray[this.tickGears[3].next] += this.tickGears[4].next;
+						this.keyArray[this.tickGears[4].next] += 3 + this.keyArray[this.tickGears[1].next];
+						for(var x = 0; x < this.keyLength; x++){
+							this.keyArray[x] = (this.keyArray[x]&255);
+						}
+					} else {
+						var A;
+						var B;
+						var C;
+						var D;
+						var E;
+						if (this.keyLength>13){
+							A = this.newGear(1,this.keyLength-1,0);
+							B = this.newGear(7,this.keyLength-1,4);
+							C = this.newGear(5,this.keyLength-1,6);
+							D = this.newGear(3,this.keyLength-1,3);
+							E = this.newGear(11,this.keyLength-1,5);
+						} else if (this.keyLength>7){
+							A = this.newGear(1,this.keyLength-1,0);
+							B = this.newGear(3,this.keyLength-1,4);
+							C = this.newGear(5,this.keyLength-1,6);
+							D = this.newGear(4,this.keyLength-1,3);
+							E = this.newGear(6,this.keyLength-1,5);
+						} else if (this.keyLength>3){
+							A = this.newGear(1,this.keyLength-1,0);
+							B = this.newGear(2,this.keyLength-1,1);
+							C = this.newGear(1,this.keyLength-1,1);
+							D = this.newGear(3,this.keyLength-1,0);
+							E = this.newGear(2,this.keyLength-1,3);
+						} else {
+							//console.log("Tick failed! There is no key!");
+							return false;
+						}
+						this.tickGears = [A,B,C,D,E];
+						this.keyArray[this.tickGears[0].next] += 5 + this.keyArray[this.tickGears[1].next];
+						this.keyArray[this.tickGears[1].next] += this.tickGears[2].next;
+						this.keyArray[this.tickGears[2].next] += 1 + this.keyArray[this.tickGears[3].next];
+						this.keyArray[this.tickGears[3].next] += this.tickGears[4].next;
+						this.keyArray[this.tickGears[4].next] += 3 + this.keyArray[this.tickGears[0].next];
+						this.keyArray[this.tickGears[0].next] += 5 + this.keyArray[this.tickGears[1].next];
+						this.keyArray[this.tickGears[1].next] += this.tickGears[2].next;
+						this.keyArray[this.tickGears[2].next] += 1 + this.keyArray[this.tickGears[3].next];
+						this.keyArray[this.tickGears[3].next] += this.tickGears[4].next;
+						this.keyArray[this.tickGears[4].next] += 3 + this.keyArray[this.tickGears[0].next];
+						for(var x = 0; x < this.keyLength; x++){
+							this.keyArray[x] = (this.keyArray[x]&255);
+						}
+					}
+					return true;
+				} else {
+					//console.log("Tick failed! There is no key!");
+					return false;
+				}
+			} else {
+				//console.log("Tick failed! There is no key!");
+				return false;
+			}
+		},
 
 		get testClock() {
 			var input = "000102030405060708090a0b0c0d0e0f1012131415161718191a1b1c1d1e1f";
@@ -572,7 +647,6 @@ function newCipherClock(keyLength,numGears){
 				setProperties:function(length,range,startValue){
 					if(range){
 						if(length){
-
 								if(range>0){
 									if(length>0){
 										if(startValue>=0){
@@ -597,7 +671,6 @@ function newCipherClock(keyLength,numGears){
 								} else {
 									return false;
 								}
-
 						} else {
 							return false;
 						}
@@ -608,13 +681,11 @@ function newCipherClock(keyLength,numGears){
 				get next() {
 					if(this.range){
 						if(this.length){
-
 								if(this.range>0){
 									if(this.length>0){
 										if(this.value>=0){
 											if(this.range>this.length){
-
-													if((this.value+this.length)>this.range){
+													if((this.value+this.length)>=this.range){
 														this.value = this.value + this.length - this.range;
 														return (this.value);
 													} else {
