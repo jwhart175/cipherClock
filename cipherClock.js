@@ -1,23 +1,3 @@
-//MIT License
-//Copyright (c) 2018 Jonathan Hart
-
-//Permission is hereby granted, free of charge, to any person obtaining a copy
-//of this software and associated documentation files (the "Software"), to deal
-//in the Software without restriction, including without limitation the rights
-//to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-//copies of the Software, and to permit persons to whom the Software is
-//furnished to do so, subject to the following conditions:
-//The above copyright notice and this permission notice shall be included in all
-//copies or substantial portions of the Software.
-
-//THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-//IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-//FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-//AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-//LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-//OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-//SOFTWARE.
-
 function newCipherClock(keyLength,numGears){
 	let cipher = {
 		keyLength:0,
@@ -26,6 +6,8 @@ function newCipherClock(keyLength,numGears){
 		inString:"",
 		keyArray:[],
 		tickGears:false,
+		lowerCaseArray:["aa","ab","ac","ad","ae","af","ag","ah","ai","aj","ak","al","am","an","ao","ap","ba","bb","bc","bd","be","bf","bg","bh","bi","bj","bk","bl","bm","bn","bo","bp","ca","cb","cc","cd","ce","cf","cg","ch","ci","cj","ck","cl","cm","cn","co","cp","da","db","dc","dd","de","df","dg","dh","di","dj","dk","dl","dm","dn","do","dp","ea","eb","ec","ed","ee","ef","eg","eh","ei","ej","ek","el","em","en","eo","ep","fa","fb","fc","fd","fe","ff","fg","fh","fi","fj","fk","fl","fm","fn","fo","fp","ga","gb","gc","gd","ge","gf","gg","gh","gi","gj","gk","gl","gm","gn","go","gp","ha","hb","hc","hd","he","hf","hg","hh","hi","hj","hk","hl","hm","hn","ho","hp","ia","ib","ic","id","ie","if","ig","ih","ii","ij","ik","il","im","in","io","ip","ja","jb","jc","jd","je","jf","jg","jh","ji","jj","jk","jl","jm","jn","jo","jp","ka","kb","kc","kd","ke","kf","kg","kh","ki","kj","kk","kl","km","kn","ko","kp","la","lb","lc","ld","le","lf","lg","lh","li","lj","lk","ll","lm","ln","lo","lp","ma","mb","mc","md","me","mf","mg","mh","mi","mj","mk","ml","mm","mn","mo","mp","na","nb","nc","nd","ne","nf","ng","nh","ni","nj","nk","nl","nm","nn","no","np","oa","ob","oc","od","oe","of","og","oh","oi","oj","ok","ol","om","on","oo","op","pa","pb","pc","pd","pe","pf","pg","ph","pi","pj","pk","pl","pm","pn","po","pp"],
+		
 
 		get tick() {
 			if(this.keyLength){
@@ -102,7 +84,7 @@ function newCipherClock(keyLength,numGears){
 		},
 
 		get testClock() {
-			var input = "000102030405060708090a0b0c0d0e0f1012131415161718191a1b1c1d1e1f";
+			var input = "000102030405060708090a0b0c0d0e0f1012131415161718191a1b1c1d1e1f000102";
 			var output = "";
 			var pass = "abcdefghijklmnopqrstuvwxzy0123456789!@#$%^&*()";
 			this.setInString(input);
@@ -123,6 +105,16 @@ function newCipherClock(keyLength,numGears){
 				console.log("Hex encryption Successful!");
 			} else {
 				console.log("Hex encryption Failed!");
+				console.log("input: " + input);
+				console.log("output: " + output);
+			}
+			this.setInString(input);
+			this.setInString(this.encryptLowerCase);
+			output = this.decryptLowerCase;
+			if(input === output){
+				console.log("lowerCase encryption Successful!");
+			} else {
+				console.log("lowerCase encryption Failed!");
 				console.log("input: " + input);
 				console.log("output: " + output);
 			}
@@ -207,130 +199,130 @@ function newCipherClock(keyLength,numGears){
 		},
 
 		testHex:function(index,test){
-        	/*
-        	 * This function returns true if the character of test
-        	 * at the index is a base 16 number.  It returns false if the character is not a number.
-        	 *
-        	 */
-        	var answer = false;
-        	var answer = false;
-        	if(index<test.length){
-        		if(index>=0){
-        			if(test.substring(index,index+1)=="0"){
-        				answer = true;
-        			} else if(test.substring(index,index+1)=="1"){
-        				answer = true;
-        			} else if(test.substring(index,index+1)=="2"){
-        				answer = true;
-        			} else if(test.substring(index,index+1)=="3"){
-        				answer = true;
-        			} else if(test.substring(index,index+1)=="4"){
-        				answer = true;
-        			} else if(test.substring(index,index+1)=="5"){
-        				answer = true;
-        			} else if(test.substring(index,index+1)=="6"){
-        				answer = true;
-        			} else if(test.substring(index,index+1)=="7"){
-        				answer = true;
-        			} else if(test.substring(index,index+1)=="8"){
-        				answer = true;
-        			} else if(test.substring(index,index+1)=="9"){
-        				answer = true;
-        			} else if(test.substring(index,index+1)=="a"){
-        				answer = true;
-        			} else if(test.substring(index,index+1)=="b"){
-        				answer = true;
-        			} else if(test.substring(index,index+1)=="c"){
-        				answer = true;
-        			} else if(test.substring(index,index+1)=="d"){
-        				answer = true;
-        			} else if(test.substring(index,index+1)=="e"){
-        				answer = true;
-        			} else if(test.substring(index,index+1)=="f"){
-        				answer = true;
-        			}
-        		}
-        	}
-        	return answer;
-        },
+      	/*
+      	 * This function returns true if the character of test
+      	 * at the index is a base 16 number.  It returns false if the character is not a number.
+      	 *
+      	 */
+      	var answer = false;
+      	var answer = false;
+      	if(index<test.length){
+      		if(index>=0){
+      			if(test.substring(index,index+1)=="0"){
+      				answer = true;
+      			} else if(test.substring(index,index+1)=="1"){
+      				answer = true;
+      			} else if(test.substring(index,index+1)=="2"){
+      				answer = true;
+      			} else if(test.substring(index,index+1)=="3"){
+      				answer = true;
+      			} else if(test.substring(index,index+1)=="4"){
+      				answer = true;
+      			} else if(test.substring(index,index+1)=="5"){
+      				answer = true;
+      			} else if(test.substring(index,index+1)=="6"){
+      				answer = true;
+      			} else if(test.substring(index,index+1)=="7"){
+      				answer = true;
+      			} else if(test.substring(index,index+1)=="8"){
+      				answer = true;
+      			} else if(test.substring(index,index+1)=="9"){
+      				answer = true;
+      			} else if(test.substring(index,index+1)=="a"){
+      				answer = true;
+      			} else if(test.substring(index,index+1)=="b"){
+      				answer = true;
+      			} else if(test.substring(index,index+1)=="c"){
+      				answer = true;
+      			} else if(test.substring(index,index+1)=="d"){
+      				answer = true;
+      			} else if(test.substring(index,index+1)=="e"){
+      				answer = true;
+      			} else if(test.substring(index,index+1)=="f"){
+      				answer = true;
+      			}
+      		}
+      	}
+      	return answer;
+      },
 
-        getIntFromHexString:function(hex){
-        	/*
-        	 * This function validates the input then returns the integer value of a string containing
-        	 * a hex value.  Returns -1 if input is invalid.
-        	 */
-        	var answer = false;
-        	if(!hex){
-        		return -1;
-        	}
-        	if(typeof hex != typeof "test"){
-        		return -1;
-        	}
-        	var length = hex.length;
-        	var number = 0;
-        	var product = 1;
-        	for (var x = 0; x < length; x++) {
-        		if(this.testHex(x,hex)){
-        			if(hex.substring(length-x-1,length-x)=="a"){
-        				number += 10*product;
-        			} else if(hex.substring(length-x-1,length-x)=="b"){
-        				number += 11*product;
-        			} else if(hex.substring(length-x-1,length-x)=="c"){
-        				number += 12*product;
-        			} else if(hex.substring(length-x-1,length-x)=="d"){
-        				number += 13*product;
-        			} else if(hex.substring(length-x-1,length-x)=="e"){
-        				number += 14*product;
-        			} else if(hex.substring(length-x-1,length-x)=="f"){
-        				number += 15*product;
-        			} else if(this.testNumeric(length-x-1,hex)){
-        				number += hex.substring(length-x-1,length-x)*product;
-        			} else {
-        				return -1;
-        			}
-        		} else {
-        			return -1;
-        		}
-        		product = product*16;
-        	}
-        	//console.log(number);
-        	return number;
-        },
+      getIntFromHexString:function(hex){
+      	/*
+      	 * This function validates the input then returns the integer value of a string containing
+      	 * a hex value.  Returns -1 if input is invalid.
+      	 */
+      	var answer = false;
+      	if(!hex){
+      		return -1;
+      	}
+      	if(typeof hex != typeof "test"){
+      		return -1;
+      	}
+      	var length = hex.length;
+      	var number = 0;
+      	var product = 1;
+      	for (var x = 0; x < length; x++) {
+      		if(this.testHex(x,hex)){
+      			if(hex.substring(length-x-1,length-x)=="a"){
+      				number += 10*product;
+      			} else if(hex.substring(length-x-1,length-x)=="b"){
+      				number += 11*product;
+      			} else if(hex.substring(length-x-1,length-x)=="c"){
+      				number += 12*product;
+      			} else if(hex.substring(length-x-1,length-x)=="d"){
+      				number += 13*product;
+      			} else if(hex.substring(length-x-1,length-x)=="e"){
+      				number += 14*product;
+      			} else if(hex.substring(length-x-1,length-x)=="f"){
+      				number += 15*product;
+      			} else if(this.testNumeric(length-x-1,hex)){
+      				number += hex.substring(length-x-1,length-x)*product;
+      			} else {
+      				return -1;
+      			}
+      		} else {
+      			return -1;
+      		}
+      		product = product*16;
+      	}
+      	//console.log(number);
+      	return number;
+      },
 
-        testNumeric:function(index,test){
-        	/*
-        	 * This function returns true if the character of test
-        	 * at the index is a number.  It returns false if the character is not a number.
-        	 *
-        	 */
-        	var answer = false;
-        	if(index<test.length){
-        		if(index>=0){
-        			if(test.substring(index,index+1)=="0"){
-        				answer = true;
-        			} else if(test.substring(index,index+1)=="1"){
-        				answer = true;
-        			} else if(test.substring(index,index+1)=="2"){
-        				answer = true;
-        			} else if(test.substring(index,index+1)=="3"){
-        				answer = true;
-        			} else if(test.substring(index,index+1)=="4"){
-        				answer = true;
-        			} else if(test.substring(index,index+1)=="5"){
-        				answer = true;
-        			} else if(test.substring(index,index+1)=="6"){
-        				answer = true;
-        			} else if(test.substring(index,index+1)=="7"){
-        				answer = true;
-        			} else if(test.substring(index,index+1)=="8"){
-        				answer = true;
-        			} else if(test.substring(index,index+1)=="9"){
-        				answer = true;
-        			}
-        		}
-        	}
-        	return answer;
-        },
+      testNumeric:function(index,test){
+      	/*
+      	 * This function returns true if the character of test
+      	 * at the index is a number.  It returns false if the character is not a number.
+      	 *
+      	 */
+      	var answer = false;
+      	if(index<test.length){
+      		if(index>=0){
+      			if(test.substring(index,index+1)=="0"){
+      				answer = true;
+      			} else if(test.substring(index,index+1)=="1"){
+      				answer = true;
+      			} else if(test.substring(index,index+1)=="2"){
+      				answer = true;
+      			} else if(test.substring(index,index+1)=="3"){
+      				answer = true;
+      			} else if(test.substring(index,index+1)=="4"){
+      				answer = true;
+      			} else if(test.substring(index,index+1)=="5"){
+      				answer = true;
+      			} else if(test.substring(index,index+1)=="6"){
+      				answer = true;
+      			} else if(test.substring(index,index+1)=="7"){
+      				answer = true;
+      			} else if(test.substring(index,index+1)=="8"){
+      				answer = true;
+      			} else if(test.substring(index,index+1)=="9"){
+      				answer = true;
+      			}
+      		}
+      	}
+      	return answer;
+      },
 
 		get key() {
 			/*
@@ -425,22 +417,14 @@ function newCipherClock(keyLength,numGears){
 					while(x < (inputLength-1)) {
 						if(this.testHex(x,input)&&this.testHex(x+1,input)){
 							outShift = 0;
-
 							for(var y = 0; y < keyGears.length; y++){
-								//console.log(keyShift[keyGears[y].next]);
 								outShift += keyShift[keyGears[y].next];
 							}
 							for(var y = 0; y < gears.length; y++){
-								//console.log(gears[y].next);
 								outShift += gears[y].next;
 							}
-							//console.log(outShift);
 							outShift += this.getIntFromHexString(input.substring(x,x+2));
-							//console.log(outShift);
-
 							outShift = (outShift&255);
-
-							//console.log(outShift);
 							if(outShift.toString(16).length==1){
 								output += "0" + outShift.toString(16);
 							} else {
@@ -452,12 +436,122 @@ function newCipherClock(keyLength,numGears){
 						}
 					}
 				}
-				//console.log(output);
 				return output;
 			}
 			return false;
 		},
 
+		getLowerCaseFromInt:function(test){
+			if(test < 256 || test >= 0){
+				return this.lowerCaseArray[test];
+			} else {
+				//console.log("Cannot convert " + test + " to lowerCase!");
+				return false;
+			}
+		},
+		
+		getIntFromLowerCase:function(test){
+			for(var x = 0; x < 256;x++){
+				if(test === this.lowerCaseArray[x]){
+					return x;
+				}
+			}
+			//console.log("Cannot convert " + test + " to an integer!");
+			return false;
+		},
+		
+		get encryptLowerCase(){
+			/*
+			 *  This function attempts to encrypt this.inString with a key generated from
+			 *  this.passString.  It returns the encrypted string or false if either
+			 *  this.inString or this.passString is valid.
+			 */
+			var output = "";
+			if(this.inString&&this.passString){
+				if(typeof this.inString == typeof "test" && typeof this.passString == typeof "test"){
+					var keyShift = this.keyArray;
+					var inputLength = this.inString.length;
+					var input = this.inString;
+					var outShift = 0;
+					var keyGears = [];
+					for (var x = 0; x < Math.floor(this.keyLength/2); x++){
+						keyGears.push(this.newGear(x+1, this.keyLength-1, Math.floor(x+0.5*x)));
+					}
+					var gears = [];
+					for (var x = 0; x < this.numGears; x++){
+						var shift = Math.ceil(this.numGears*2.5);
+						for(var y = 0; y < keyGears.length; y+=4){
+							shift += keyShift[keyGears[y].next];
+						}
+						gears.push(this.newGear(x+1, shift, Math.floor(x+0.5*x)));
+					}
+					var x = 0;
+					while(x < (inputLength)) {
+						outShift = 0;
+						for(var y = 0; y < keyGears.length; y++){
+							outShift += keyShift[keyGears[y].next];
+						}
+						for(var y = 0; y < gears.length; y++){
+							outShift += gears[y].next;
+						}
+						outShift += input.codePointAt(x);
+						outShift = (outShift&255);
+						output += this.getLowerCaseFromInt(outShift);
+						x++;
+					}
+				}
+				return output;
+			}
+			return false;
+		},
+		
+		get decryptLowerCase(){
+			/*
+			 *  This function attempts to decrypt this.inString with a key generated from
+			 *  this.passString.  It returns the encrypted string or false if either
+			 *  this.inString or this.passString is valid.
+			 */
+			var output = "";
+			if(this.inString&&this.passString){
+				if(typeof this.inString == typeof "test" && typeof this.passString == typeof "test"){
+					var keyShift = this.keyArray;
+					var inputLength = this.inString.length;
+					var input = this.inString;
+					var outShift = 0;
+					var keyGears = [];
+					for (var x = 0; x < Math.floor(this.keyLength/2); x++){
+						keyGears.push(this.newGear(x+1, this.keyLength-1, Math.floor(x+0.5*x)));
+					}
+					var gears = [];
+					for (var x = 0; x < this.numGears; x++){
+						var shift = Math.ceil(this.numGears*2.5);
+						for(var y = 0; y < keyGears.length; y+=4){
+							shift += keyShift[keyGears[y].next];
+						}
+						gears.push(this.newGear(x+1, shift, Math.floor(x+0.5*x)));
+					}
+					var x = 2;
+					while(x < (inputLength+1)) {
+						outShift = 0;
+						for(var y = 0; y < keyGears.length; y++){
+							outShift += keyShift[keyGears[y].next];
+						}
+						for(var y = 0; y < gears.length; y++){
+							outShift += gears[y].next;
+						}
+						outShift = 0 - outShift
+						outShift += this.getIntFromLowerCase(input.substring(x-2,x));
+						outShift = (outShift&255);
+						output += String.fromCharCode(outShift)
+						
+						x+=2;
+					}
+				}
+				return output;
+			}
+			return false;
+		},
+		
 		get decryptHex(){
 			/*
 			 *  This function attempts to decrypt this.inString with a key generated from
@@ -493,27 +587,18 @@ function newCipherClock(keyLength,numGears){
 							for(var y = 0; y < gears.length; y++){
 								outShift += gears[y].next;
 							}
-
 							outShift = 0 - outShift;
-
 							outShift += this.getIntFromHexString(input.substring(x,x+2));
-
 							outShift = (outShift&255);
-
-							//console.log(outShift);
-
 							if(outShift.toString(16).length==1){
 								output += "0" + outShift.toString(16);
 							} else {
 								output += outShift.toString(16);
 							}
-
 							x+=2;
 						} else {
-							//console.log(input.substring(x,x+2));
 							output += "?";
 							x++;
-
 						}
 					}
 					return output;
@@ -555,17 +640,14 @@ function newCipherClock(keyLength,numGears){
 						for(var y = 0; y < gears.length; y++){
 							outShift += gears[y].next;
 						}
-
 						if(input.codePointAt(x)==10){
 							outShift += 31;
 						} else {
 							outShift += input.codePointAt(x);
 						}
-
 						while(outShift>125){
 							outShift = outShift - 126 + 31;
 						}
-
 						if(outShift==31){
 							output += String.fromCharCode(10);
 						} else {
@@ -573,13 +655,10 @@ function newCipherClock(keyLength,numGears){
 						}
 					}
 				}
-				console.log(output);
 				return output;
 			}
 			return false;
 		},
-
-
 
 		get decryptText(){
 			/*
@@ -614,19 +693,15 @@ function newCipherClock(keyLength,numGears){
 						for(var y = 0; y < gears.length; y++){
 							outShift += gears[y].next;
 						}
-
 						outShift = 0 - outShift;
-
 						if(input.codePointAt(x)==10){
 							outShift += 31;
 						} else {
 							outShift += input.codePointAt(x);
 						}
-
 						while(outShift<31){
 							outShift = outShift + 126 - 31;
 						}
-
 						if(outShift==31){
 							output += String.fromCharCode(10);
 						} else {
@@ -729,4 +804,3 @@ function newCipherClock(keyLength,numGears){
 	}
 	return cipher;
 }
-
