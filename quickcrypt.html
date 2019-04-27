@@ -26,19 +26,26 @@ SOFTWARE.
 -->
 
 <body>
-<div><h1>Quick Crypt</h1></div>
-<div><p></p><p></p><span>Directions:</span></div>
-<div><span>1. In "Text to Process" select or enter a text message file to encrypt or decrypt.</span></div>
-<div><span>2. Enter a password.  Longer passwords are better, all special characters can be used, passwords are case sensitive.</span></div>
-<div><span>3. Hit encrypt to generate encrypted text in the output box, or decrypt to attempt to generate the original text from encrypted text in the output box.</span><p></p></div>
-<div><span>Text to Process:</span></div>
-<div><input type="file" id="filein" accept="text/*" multiple=false></input></div>
-<div><textarea id="fileintext" rows="8" cols="150"></textarea></div>
-<div><span>Password:</span></div>
-<div><input type="password" id="password" disabled=true></input></div>
-<div><button id="encryptButton">ENCRYPT</button><button id="decryptButton">DECRYPT</button></div>
-<div><span>Output:</span></div>
-<div><textarea id="fileout" row="8" cols="150" readonly=true></textarea></div>
+<div  style="margin:2%;border:2px solid darkgrey;background-color:#dfdfff">
+<div><h1 style="margin-left:30%;margin-right:30%;background-color:#dfdfff;text-align:center;color:#202080">Quick Crypt</h1></div>
+<div><p></p><p></p><span style="margin-left:3%;margin-right:3%;background-color:#dfdfff;color:#202080">Directions:</span></div>
+<ol style="margin-left:3%;margin-right:3%;background-color:#dfdfff;color:#202080;list-style-type:number">
+<li>In "Text to Process" select or enter a text message file to encrypt or decrypt.</li>
+<li>Enter a password.  Longer passwords are better, all special characters can be used, passwords are case sensitive.</li>
+<li>Hit encrypt to generate encrypted text in the output box, or decrypt to attempt to generate the original text from encrypted text in the output box.</li>
+</ol><p></p><p></p>
+<div style="margin:2%;border:2px solid darkgrey">
+<div><h3 style="margin:1%;color:#202080">Text to Process</h3></div>
+<div style="margin:1%"><input style="color:#202080" type="file" id="filein" accept="text/*" multiple=false></input></div>
+<div style="margin:1%"><textarea style="background-color:#efefff;height:120px;width:99%;color:#202080" id="fileintext" rows="8"></textarea></div>
+<div><h3 style="margin:1%;color:#202080">Password</h3></div>
+<div style="margin:1%"><input style="background-color:#efefff;height:24px;width:99%;color:#202080" type="password" id="password" disabled=true></input></div>
+<div style="margin:1%"><button id="encryptButton">ENCRYPT</button><button id="decryptButton">DECRYPT</button></div>
+
+<div><h3 style="margin:1%;color:#202080">Output</h3></div>
+<div style="margin:1%"><textarea style="background-color:#efefff;height:120px;width:99%;color:#202080" id="fileout" row="8" cols="150" readonly=true></textarea></div>
+</div>
+</div>
 </body>
 
 <script>
